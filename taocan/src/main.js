@@ -6,19 +6,19 @@ import router from './router'
 import VueI18n from 'vue-i18n'
 
 Vue.use(VueI18n)
+Vue.config.productionTip = false
+
 const i18n = new VueI18n({
-   locale: 'ja',
-   messages: {
-     ja: {
-       hello: 'こんにちは'
+    locale: 'zh',
+    messages: {
+     zh: {
+       hello: '你好'
      },
      en: {
        hello: 'hello'
      }
     }
-   })
-
- Vue.config.productionTip = false
+})
 
 /* eslint-disable no-new */
 new Vue({
