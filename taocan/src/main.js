@@ -12,10 +12,12 @@ const i18n = new VueI18n({
     locale: 'zh',
     messages: {
      zh: {
-       hello: '你好'
+       hello: '你好',
+       baibai: '再见'
      },
      en: {
-       hello: 'hello'
+       hello: 'hello',
+       baibai: 'beybey'
      }
     }
 })

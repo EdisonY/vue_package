@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <h1> <span>{{$t('hello')}}</span></h1>
+    <h1> <span>{{$t('baibai')}}</span></h1>
 
   </div>
 </template>
