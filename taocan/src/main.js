@@ -6,9 +6,12 @@ import router from './router'
 import VueI18n from 'vue-i18n'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import iView from 'iview'
+import 'iview/dist/styles/iview.css'
 
 Vue.use(ElementUI)
 Vue.use(VueI18n)
+Vue.use(iView)
 Vue.config.productionTip = false
 
 const i18n = new VueI18n({
@@ -18,7 +21,7 @@ const i18n = new VueI18n({
        pay_switch: '支付开关'
      },
      en: {
-       
+       pay_switch: '支付开关'
      }
     }
 })
@@ -28,6 +31,7 @@ new Vue({
   el: '#app',
   router,
   i18n,
+  iView,
   ElementUI,
   template: '<App/>',
   components: { App }

@@ -24,11 +24,11 @@
      <div class="tc_right_btn">
          <strong>{{ $t('pay_switch') }}</strong>
          <el-switch v-model="pay_switch" on-color="#13ce66" off-color="#ff4949"></el-switch>
-         <a href="javascript:void(0)" class="el-icon-view"></a>
+         <a href="javascript:void(0)" class="ivu-icon ivu-icon-eye"></a>
      </div>
      <div class="tc_setting pack_setting tc_setting_done">
          <i class="num_setting">1</i>
-         <h3 class="tc_setting_title">套餐、道具配置</h3>
+         <h3 class="tc_setting_title" @click="toggle">套餐、道具配置</h3>
          <div class="copy_pack">
              <span>复制套餐：</span>
              <a class="el-button el-button--info el-button--small">FB</a>
@@ -47,27 +47,43 @@
              </el-select>
              =
              <el-input v-model="input" placeholder="游戏币数量"></el-input>
-             <el-input v-model="input" placeholder="游戏币名称"></el-input>
+             <el-input v-model="input1" placeholder="游戏币名称"></el-input>
          </div>
          <el-tabs>
           <el-tab-pane label="套餐配置">
-              <el-table :data="tableData" border style="width: 100%">
-                  <el-table-column prop="name" label="套餐名称"></el-table-column>
-                  <el-table-column prop="description" label="套餐描述"></el-table-column>
-                  <el-table-column prop="coin" label="游戏币"></el-table-column>
-                  <el-table-column prop="" label="定价货币"></el-table-column>
-                  <el-table-column prop="" label="定价价格"></el-table-column>
-                  <el-table-column prop="" label="显示货币"></el-table-column>
-                  <el-table-column prop="" label="显示价格"></el-table-column>
-                  <el-table-column prop="" label="支付货币"></el-table-column>
-                  <el-table-column prop="" label="支付价格"></el-table-column>
-                  <el-table-column prop="" label="传递货币"></el-table-column>
-                  <el-table-column prop="" label="传递价格"></el-table-column>
-                  <el-table-column prop="" label="奖励钻石"></el-table-column>
-                  <el-table-column prop="" label="钻石logo" row-class-name="el-icon-information"></el-table-column>
-                  <el-table-column prop="" label="奖励钻石logo"></el-table-column>
-                  <el-table-column prop="" label="操作"></el-table-column>
-              </el-table>
+              <div class="ivu-table-wrapper">
+              <div class="ivu-table ivu-table-border">
+                  <div class="ivu-table-header">
+                      <table>
+                          <tr>
+                              <th>{{ $t('pay_switch') }}</th>
+                              <th>{{ $t('pay_switch') }}</th>
+                              <th>{{ $t('pay_switch') }}</th>
+                              <th>{{ $t('pay_switch') }}</th>
+                              <th>
+                                  {{ $t('pay_switch') }}
+                                  <Tooltip content="这里是提示文字">
+                                        <Icon type="help-circled"></Icon>
+                                  </Tooltip>
+                              </th>
+                              <th>操作</th>
+                          </tr>
+                      </table>
+                  </div>
+                  <div class="ivu-table-body">
+                      <table>
+                          <tr class="ivu-table-row">
+                              <td @dblclick="chang_table($event)" value="1">1</td>
+                              <td>2</td>
+                              <td>3</td>
+                              <td>4</td>
+                              <td>5</td>
+                              <td>6</td>
+                          </tr>
+                      </table>
+                  </div>
+              </div>
+              </div>
           </el-tab-pane>
           <el-tab-pane label="道具配置">道具配置</el-tab-pane>
         </el-tabs>
@@ -90,6 +106,7 @@ export default {
       return {
           pay_switch:true,
           input:'',
+          input1:'',
           value: true,
           activeName2: 'first',
           activeNames:['1'],
@@ -108,17 +125,18 @@ export default {
             }, {
               value: '选项5',
               label: '北京烤鸭'
-          }],
-          tableData:[{
-              name: '名字',
-              description: '描述',
-              coin: '100'
           }]
       }
   },
   methods: {
       handleClick(tab, event) {
         console.log(tab.name);
+      },
+      toggle(){
+          alert('aa')
+      },
+      chang_table(e){
+         console.log(e.target)
       }
   }
 }

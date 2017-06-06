@@ -3,7 +3,7 @@
 .clear{clear: both;}
 .el-table th>.cell{text-align: center;padding:0;}
 .el-table td>.cell{text-align: center;padding:0;}
-.el-tabs i{margin-left: 5px;color: green;}
+.el-tabs--card i{margin-left: 5px;color: green;}
 .tc_title{font-size: 16px;padding:10px 0 20px 0;color: red;}
 .tc_right_btn{position: absolute;right: 20px;top: 20px;}
 .tc_right_btn strong,.tc_right_btn label,.tc_right_btn a{display: inline-block;vertical-align: middle;font-size: 12px;}
@@ -12,7 +12,7 @@
 .tc_setting{margin-left: 20px;border-left:1px solid #bfcbd9;min-height: 200px;}
 .tc_setting .num_setting{width:28px;height: 28px;line-height: 28px;border-radius: 50%;text-align: center;display: block;margin-left:-16px;margin-right: 5px;float: left;}
 .tc_setting .num_setting{border: 2px solid #bfcbd9;color: #bfcbd9;background: #fff;}
-.tc_setting .tc_setting_title{height: 30px;line-height: 30px;margin-left: 5px;float: left;font-size: 16px;}
+.tc_setting .tc_setting_title{height: 30px;line-height: 30px;margin-left: 5px;float: left;font-size: 16px;cursor: pointer;}
 .tc_setting_done{border-color: #20a0ff;}
 .tc_setting_done .num_setting{border: 2px solid #20a0ff;color: #fff;background: #20a0ff;}
 .tc_setting_done .tc_setting_title{color: #20a0ff}
@@ -22,7 +22,10 @@
 .proportion_pack_tc .el-input{width: auto;}
 .proportion_pack_tc .dj_proportion{margin-left: 20px;}
 
-.pack_setting .el-tabs{margin: 0 25px;}
+.pack_setting .el-tabs{margin:0 25px;}
+.ivu-table table{width:100%;}
+.ivu-table table tr th,.ivu-table table tr td{text-align: center;line-height: 22px;}
+.ivu-table i{font-size: 14px;vertical-align: middle;margin-left: 5px;}
 
 
 
