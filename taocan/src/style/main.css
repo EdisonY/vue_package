@@ -1,4 +1,5 @@
 #app{padding:10px;position: relative;font-size: 14px;color: #333;}
+.clearfix:after{ display:block; content:""; visibility:hidden; height:0; clear:both}
 .red{color: red;}
 .clear{clear: both;}
 .el-table th>.cell{text-align: center;padding:0;}
@@ -10,9 +11,10 @@
 .tc_right_btn label{margin-right: 20px;}
 .tc_right_btn a{color: #333;text-decoration: none;font-size: 14px;}
 .tc_setting{margin-left: 20px;border-left:1px solid #bfcbd9;min-height: 200px;}
-.tc_setting .num_setting{width:28px;height: 28px;line-height: 28px;border-radius: 50%;text-align: center;display: block;margin-left:-16px;margin-right: 5px;float: left;}
+.tc_setting .num_setting{width:28px;height: 28px;line-height: 24px;border-radius: 50%;text-align: center;display: block;margin-left:-16px;margin-right: 5px;position: absolute;}
 .tc_setting .num_setting{border: 2px solid #bfcbd9;color: #bfcbd9;background: #fff;}
-.tc_setting .tc_setting_title{height: 30px;line-height: 30px;margin-left: 5px;float: left;font-size: 16px;cursor: pointer;}
+.tc_setting .tc_setting_title{height: 30px;line-height: 30px;margin-left: 20px;font-size: 16px;}
+.pack_setting .tc_setting_title{float: left;}
 .tc_setting_done{border-color: #20a0ff;}
 .tc_setting_done .num_setting{border: 2px solid #20a0ff;color: #fff;background: #20a0ff;}
 .tc_setting_done .tc_setting_title{color: #20a0ff}
@@ -25,19 +27,37 @@
 .pack_setting .el-tabs{margin:0 25px;}
 .ivu-table table{width:100%;}
 .ivu-table table tr th,.ivu-table table tr td{text-align: center;line-height: 22px;}
-.ivu-table i{font-size: 14px;vertical-align: middle;margin-left: 5px;}
+.ivu-table i{font-size: 24px;margin-left: 0;vertical-align: middle;}
+.ivu-table table tr th i{font-size: 14px;vertical-align: middle;margin-left: 5px;}
 
+.ivu-upload button{border: none;padding:0;}
+.table_bottom{padding:15px 25px;line-height: 32px;}
+.table_bottom button{display: block;float: right;}
 
+.already_chose,.search_country,.channel_chose,.stencil_chose,.country_setting p,.channel_main{margin: 0 21px;padding: 10px 0;}
+.already_chose a{display: block;float: right;}
+.search_country .el-input{display: inline-block;width: auto;}
+.search_country .country_list,.channel_list_main{margin:10px 0;overflow-y: auto;height: 150px;}
+.search_country .country_list ul li,.channel_chose ul li{padding: 10px 0;border-bottom: 1px dashed #ccc;vertical-align: middle;}
+.search_country .country_list ul li span,.channel_chose ul li span{float: left;height: 32px;line-height: 32px;min-width: 80px;}
+.search_country .country_list ul li .country_list_main,.channel_chose ul li .channel_list{float: left;}
+.search_country .country_list ul li .country_list_main span,.channel_chose ul li .channel_list span{float: none;height: auto;line-height: normal;}
+.channel_chose ul li{border: none;}
+.stencil_chose ul{padding: 15px 0;}
+.stencil_chose ul li{float: left;text-align: center;cursor: pointer;margin: 0 10px;}
+.stencil_chose ul li img{width: 80px;height: 80px;display: block;border: 1px solid #ccc;cursor: pointer;border-radius: 4px;}
+.stencil_chose ul li label{margin: 5px 0 0 0;}
+.stencil_chose b{display: block;}
+.country_setting p button{float: right;}
+.country_setting b{font-weight: bold;}
+.channel_search {padding: 15px 0;}
+.channel_search .el-select{margin-right: 20px;}
 
-
-
-
-
-
-
-
-
-
+.more_info{margin: 15px;background: #ccc;}
+.more_info i{font-size: 20px;margin: 0 2px;}
+.upload-demo button{padding: 0;border: none;}
+.channel_setting p{padding: 15px 0;}
+.channel_setting i{font-size: 24px;vertical-align: middle;}
 
 
 
