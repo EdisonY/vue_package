@@ -1,15 +1,17 @@
-#app{padding:10px;position: relative;font-size: 14px;color: #333;}
+#app{padding:10px;position: relative;font-size: 14px;color: #333;overflow: hidden;}
 .clearfix:after{ display:block; content:""; visibility:hidden; height:0; clear:both}
 .red{color: red;}
 .clear{clear: both;}
+#app i{cursor: pointer;}
 .el-table th>.cell{text-align: center;padding:0;}
 .el-table td>.cell{text-align: center;padding:0;}
 .el-tabs--card i{margin-left: 5px;color: green;}
 .tc_title{font-size: 16px;padding:10px 0 20px 0;color: red;}
 .tc_right_btn{position: absolute;right: 20px;top: 20px;}
+.tc_right_btn .ivu-tooltip{margin: 0 15px;font-size: 20px;vertical-align: middle;}
 .tc_right_btn strong,.tc_right_btn label,.tc_right_btn a{display: inline-block;vertical-align: middle;font-size: 12px;}
 .tc_right_btn label{margin-right: 20px;}
-.tc_right_btn a{color: #333;text-decoration: none;font-size: 14px;}
+.tc_right_btn a{color: #333;text-decoration: none;font-size: 20px;}
 .tc_setting{margin-left: 20px;border-left:1px solid #bfcbd9;min-height: 200px;}
 .tc_setting .num_setting{width:28px;height: 28px;line-height: 24px;border-radius: 50%;text-align: center;display: block;margin-left:-16px;margin-right: 5px;position: absolute;}
 .tc_setting .num_setting{border: 2px solid #bfcbd9;color: #bfcbd9;background: #fff;}

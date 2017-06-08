@@ -23,15 +23,20 @@
      <h3 class="tc_title">手游-装甲突袭-全球包</h3>
      <div class="tc_right_btn">
          <strong>{{ $t('pay_switch') }}</strong>
-         <el-switch v-model="pay_switch" on-color="#13ce66" off-color="#ff4949"></el-switch>
-         <a href="javascript:void(0)" class="ivu-icon ivu-icon-eye"></a>
+         <i-switch @on-change="kaiguan" v-model="kaiguan_kg">
+            <span slot="open">开</span>
+            <span slot="close">关</span>
+         </i-switch>
+         <Tooltip content="支付页面预览">
+               <Icon type="ivu-icon ivu-icon-eye" @click="chang_table($event)" v-model="eye"></Icon>
+         </Tooltip>
      </div>
      <div class="tc_setting pack_setting tc_setting_done">
          <i class="num_setting">1</i>
          <h3 class="tc_setting_title">套餐、道具配置</h3>
          <div class="copy_pack">
              <span>复制套餐：</span>
-             <a class="el-button el-button--info el-button--small">FB</a>
+             <a class="el-button el-button--info el-button--small" @click="copy_pack($event)">FB</a>
              <a class="el-button el-button--info el-button--small">Google</a>
              <a class="el-button el-button--info el-button--small">IOS</a>
              <a class="el-button el-button--info el-button--small">Steam</a>
@@ -81,9 +86,10 @@
                                   <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
                               </td>
                               <td>
-                                  <Icon type="trash-a"></Icon>
-                                  <Icon type="ios-copy"></Icon>
-                                  <Icon type="plus-round"></Icon>
+                                  1
+                                  <Icon type="trash-a" @click.native="chang_table"></Icon>
+                                  <Icon type="ios-copy" @click="chang_table"></Icon>
+                                  <Icon type="plus-round" @click="chang_table"></Icon>
                               </td>
                           </tr>
                       </table>
@@ -119,9 +125,7 @@
                               <td>33</td>
                               <td>44</td>
                               <td>
-                                  <Upload action="//jsonplaceholder.typicode.com/posts/">
-                                    <Button type="ghost" icon="image"></Button>
-                                  </Upload>
+                                  <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
                               </td>
                               <td>
                                   <Icon type="trash-a"></Icon>
@@ -486,6 +490,9 @@
              </p>
          </div>
      </div>
+     <Modal title="提示" v-model="modal" class-name="vertical-center-modal" :loading="loading" @on-ok="asyncOK" @on-cancel="cancel" ok-text="OK" cancel-text="Cancel">
+        <p>确认{{alert_message}}支付页面吗?</p>
+    </Modal>
   </div>
 </template>
 
@@ -494,6 +501,9 @@ export default {
   name: 'app',
   data(){
       return {
+          modal:false,
+          loading:true,
+          kaiguan_kg:false,
           show:true,
           pay_switch:true,
           input:'',
@@ -507,6 +517,8 @@ export default {
           activeNames:['1'],
           switch1:true,
           fileList:[],
+          alert_message:'',
+          eye:true,
           options: [{
               value: '选项1',
               label: '黄金糕'
@@ -540,10 +552,32 @@ export default {
     },
     handleRemove(file, fileList) {
         console.log(file, fileList);
-      },
-      handlePreview(file) {
+    },
+    handlePreview(file) {
         console.log(file);
-      }
+    },
+    kaiguan(status){
+        this.modal = true;
+        if(status){
+            this.alert_message = '开启';
+        }else{
+            this.alert_message = '关闭';
+        }
+    },
+    asyncOK(params){
+        this.$api.get('topics', params, function(r) {
+            this.modal = false;
+        })
+    },
+    cancel(){
+        this.kaiguan_kg = false;
+    },
+    copy_pack(e){
+        console.log(e);
+    },
+    delect_list(){
+        console.log('a');
+    }
   }
 }
 </script>

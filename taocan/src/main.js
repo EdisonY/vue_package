@@ -8,6 +8,9 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
+import api from './config/api'
+Vue.prototype.$api = api
+
 
 Vue.use(ElementUI)
 Vue.use(VueI18n)
