@@ -28,7 +28,7 @@
             <span slot="close">关</span>
          </i-switch>
          <Tooltip content="支付页面预览">
-               <Icon type="ivu-icon ivu-icon-eye" @click="chang_table($event)" v-model="eye"></Icon>
+               <span class="ivu-icon ivu-icon-eye" :class="{ no_view : view_pay_web }"></span>
          </Tooltip>
      </div>
      <div class="tc_setting pack_setting tc_setting_done">
@@ -36,10 +36,10 @@
          <h3 class="tc_setting_title">套餐、道具配置</h3>
          <div class="copy_pack">
              <span>复制套餐：</span>
-             <a class="el-button el-button--info el-button--small" @click="copy_pack($event)">FB</a>
-             <a class="el-button el-button--info el-button--small">Google</a>
-             <a class="el-button el-button--info el-button--small">IOS</a>
-             <a class="el-button el-button--info el-button--small">Steam</a>
+             <a class="el-button el-button--info el-button--small" @click="copy_pack">FB</a>
+             <a class="el-button el-button--info el-button--small" @click="copy_pack">Google</a>
+             <a class="el-button el-button--info el-button--small" @click="copy_pack">IOS</a>
+             <a class="el-button el-button--info el-button--small" @click="copy_pack">Steam</a>
          </div>
          <div class="clear"></div>
          <div class="proportion_pack_tc">
@@ -63,7 +63,7 @@
                           <tr>
                               <th>{{ $t('pay_switch') }}</th>
                               <th>{{ $t('pay_switch') }}</th>
-                              <th>{{ $t('pay_switch') }}</th>
+                              <th>游戏币</th>
                               <th>{{ $t('pay_switch') }}</th>
                               <th>
                                   钻石logo
@@ -77,24 +77,49 @@
                   </div>
                   <div class="ivu-table-body">
                       <table>
-                          <tr class="ivu-table-row">
-                              <td @dblclick="chang_table($event)" value="1">1</td>
-                              <td>2</td>
-                              <td>3</td>
-                              <td>4</td>
+                          <tr class="ivu-table-row" v-for="(item,index) in pack_list">
                               <td>
-                                  <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                  <span v-if="pack_edit[index]">{{ item.name }}</span>
+                                  <input type="text" v-if="!pack_edit[index]" v-bind:value="item.name" v-model="item.name" />
                               </td>
                               <td>
-                                  1
-                                  <Icon type="trash-a" @click.native="chang_table"></Icon>
-                                  <Icon type="ios-copy" @click="chang_table"></Icon>
-                                  <Icon type="plus-round" @click="chang_table"></Icon>
+                                  <span v-if="pack_edit[index]">{{ item.description }}</span>
+                                  <input type="text" v-if="!pack_edit[index]" v-bind:value="item.description" v-model="item.description" />
+                              </td>
+                              <td>
+                                  <span v-if="pack_edit[index]">{{ item.gamecoin }}</span>
+                                  <input type="text" v-if="!pack_edit[index]" v-bind:value="item.gamecoin" v-model="item.gamecoin" />
+                              </td>
+                              <td>
+                                  <span v-if="pack_edit[index]">{{ item.priciCurrency }}</span>
+                                  <input type="text" v-if="!pack_edit[index]" v-bind:value="item.priciCurrency" v-model="item.priciCurrency" />
+                              </td>
+                              <td>
+                                  <el-upload v-if="!pack_edit[index]" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                  <img v-if="pack_edit[index]" v-bind:src="item.pic" />
+                              </td>
+                              <td>
+                                  <Icon type="edit" @click.native="edit_pack(index,pack_edit)" v-if="pack_edit[index]"></Icon>
+                                  <Icon type="trash-a" @click.native="del_list(index,pack_list)" v-if="pack_edit[index]"></Icon>
+                                  <!--<Icon type="ios-copy" @click.native="copy_tr(index)" v-if="item.name"></Icon>-->
+                                  <Icon type="plus-round" @click.native="add_tr(index,pack_list,pack_edit)" v-if="pack_edit[index]"></Icon>
+                                  <Icon type="ivu-icon ivu-icon-android-list" @click.native="save_pack(index,pack_edit)" v-if="!pack_edit[index]"></Icon>
+                                  <Icon type="close-round" @click.native="emp_pcak(index,pack_list)" v-if="!pack_edit[index]" ></Icon>
                               </td>
                           </tr>
                       </table>
                   </div>
               </div>
+              </div>
+              <div class="table_bottom">
+                  套餐在支付页面的显示顺序：
+                  <Tooltip content="按照游戏币的顺序（由小到大）排序" placement="top">
+                      <Icon type="arrow-up-c" @click.native="sort_list(pack_list,1)"></Icon>
+                  </Tooltip>
+                  <Tooltip content="按照游戏币的倒序（由大到小）排序" placement="top">
+                      <Icon type="arrow-down-c" @click.native="sort_list(pack_list,0)"></Icon>
+                  </Tooltip>
+                  <Button type="primary">确认提交</Button>
               </div>
           </el-tab-pane>
           <el-tab-pane label="道具配置">
@@ -119,30 +144,53 @@
                   </div>
                   <div class="ivu-table-body">
                       <table>
-                          <tr class="ivu-table-row">
-                              <td @dblclick="chang_table($event)" value="1">11</td>
-                              <td>22</td>
-                              <td>33</td>
-                              <td>44</td>
+                          <tr class="ivu-table-row" v-for="(item,index) in props_list">
                               <td>
-                                  <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                  <span v-if="props_edit[index]">{{ item.name }}</span>
+                                  <input type="text" v-if="!props_edit[index]" v-bind:value="item.name" v-model="item.name" />
                               </td>
                               <td>
-                                  <Icon type="trash-a"></Icon>
-                                  <Icon type="ios-copy"></Icon>
-                                  <Icon type="plus-round"></Icon>
+                                  <span v-if="props_edit[index]">{{ item.description }}</span>
+                                  <input type="text" v-if="!props_edit[index]" v-bind:value="item.description" v-model="item.description" />
+                              </td>
+                              <td>
+                                  <span v-if="props_edit[index]">{{ item.gamecoin }}</span>
+                                  <input type="text" v-if="!props_edit[index]" v-bind:value="item.gamecoin" v-model="item.gamecoin" />
+                              </td>
+                              <td>
+                                  <span v-if="props_edit[index]">{{ item.priciCurrency }}</span>
+                                  <input type="text" v-if="!props_edit[index]" v-bind:value="item.priciCurrency" v-model="item.priciCurrency" />
+                              </td>
+                              <td>
+                                  <el-upload v-if="!props_edit[index]" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                  <img v-if="props_edit[index]" v-bind:src="item.pic" />
+                              </td>
+                              <td>
+                                  <Icon type="edit" @click.native="edit_pack(index)" v-if="props_edit[index]"></Icon>
+                                  <Icon type="trash-a" @click.native="del_list(index)" v-if="props_edit[index]"></Icon>
+                                  <Icon type="ios-copy" @click.native="copy_tr(index,props_list)" v-if="!props_edit[index]"></Icon>
+                                  <Icon type="plus-round" @click.native="add_tr(index,props_list,props_edit)" v-if="!props_edit[index]"></Icon>
+                                  <Icon type="ivu-icon ivu-icon-android-list" @click.native="save_pack(index)" v-if="props_edit[index]"></Icon>
+                                  <Icon type="close-round" @click.native="emp_pcak(index)" v-if="props_edit[index]" ></Icon>
                               </td>
                           </tr>
                       </table>
                   </div>
               </div>
               </div>
+              <div class="table_bottom">
+                  套餐在支付页面的显示顺序：
+                  <Tooltip content="按照游戏币的顺序（由小到大）排序" placement="top">
+                      <Icon type="arrow-up-c"></Icon>
+                  </Tooltip>
+                  <Tooltip content="按照游戏币的倒序（由大到小）排序" placement="top">
+                      <Icon type="arrow-down-c"></Icon>
+                  </Tooltip>
+                  <Button type="primary">确认提交</Button>
+              </div>
           </el-tab-pane>
         </el-tabs>
-        <div class="table_bottom">
-            套餐在支付页面的显示顺序：<Icon type="arrow-up-c"></Icon><Icon type="arrow-down-c"></Icon>
-            <Button type="primary">确认提交</Button>
-        </div>
+
      </div>
      <div class="tc_setting country_setting">
          <i class="num_setting">2</i>
@@ -493,6 +541,9 @@
      <Modal title="提示" v-model="modal" class-name="vertical-center-modal" :loading="loading" @on-ok="asyncOK" @on-cancel="cancel" ok-text="OK" cancel-text="Cancel">
         <p>确认{{alert_message}}支付页面吗?</p>
     </Modal>
+    <Modal title="提示" v-model="copy_pack1" class-name="vertical-center-modal" :loading="loading" @on-ok="copy_pack_ok" @on-cancel="cancel" ok-text="OK" cancel-text="Cancel">
+       <p>确认复制当前支付类型的套餐吗?</p>
+    </Modal>
   </div>
 </template>
 
@@ -501,11 +552,18 @@ export default {
   name: 'app',
   data(){
       return {
+          view_pay_web:true,
+          pack_edit:{
+              0:true,
+              1:true
+          },
+          props_edit:false,
+          copy_pack1:false,
           modal:false,
           loading:true,
           kaiguan_kg:false,
           show:true,
-          pay_switch:true,
+          pay_switch:false,
           input:'',
           input1:'',
           input2:'',
@@ -518,7 +576,6 @@ export default {
           switch1:true,
           fileList:[],
           alert_message:'',
-          eye:true,
           options: [{
               value: '选项1',
               label: '黄金糕'
@@ -534,20 +591,31 @@ export default {
             }, {
               value: '选项5',
               label: '北京烤鸭'
-          }]
+          }],
+          pack_list:[{
+              name: '名字',
+              description:'描述',
+              gamecoin:'10',
+              priciCurrency:'USD',
+              pic:'http://www.sdasd.com/asda.jpg'
+          },{
+              name: '名字1',
+              description:'描述1',
+              gamecoin:'11',
+              priciCurrency:'USD',
+              pic:'http://www.sdasd.com/asda.jpg'
+          }],
+          props_list:[{}]
       }
   },
   methods: {
-      handleClick(tab, event) {
+    handleClick(tab, event) {
         console.log(tab.name);
-      },
-      chang_table(e){
-         console.log(e)
-      },
-      handleClose () {
+    },
+    handleClose () {
          this.show = false;
-     },
-     change (status) {
+    },
+    change (status) {
         this.$Message.info('您选择' + status);
     },
     handleRemove(file, fileList) {
@@ -569,14 +637,64 @@ export default {
             this.modal = false;
         })
     },
+    copy_pack_ok(){
+
+    },
     cancel(){
         this.kaiguan_kg = false;
     },
     copy_pack(e){
-        console.log(e);
+        this.copy_pack1 = true;
+        //console.log(e.target.getAttribute('data1'))
     },
-    delect_list(){
-        console.log('a');
+    del_list(index,item){
+        console.log(item)
+        item.splice(index,1)
+    },
+    copy_tr(index,data){
+        console.log(data)
+        var copy = this.pack_list.slice(index,index+1)
+        this.pack_list.splice(index+1,0,copy[0])
+    },
+    add_tr(index,model,status){
+        var new_list = {}
+        for(var key in model[index]){
+            new_list[key] = ''
+        }
+        model.splice(index+1,0,new_list)
+        for(var key in model){
+            if(model[key]){
+                status[key] = true
+            }else{
+                status[key] = false
+            }
+        }
+        status[index + 1] = false;
+
+    },
+    save_pack(index,model){
+        this.$Message.success('保存成功！');
+        model[index] = true
+    },
+    edit_pack(index,model){
+        model[index] = false
+    },
+    emp_pcak(index,model){
+        //console.log(JSON.stringify(model))
+        console.log(model[index])
+        for(var key in model[index]){
+            model[index][key] = ''
+        }
+    },
+    sort_list(model,status){
+        if(status>0){
+
+        }else{
+
+        }
+        for(var key in model){
+            console.log(model[key].gamecoin)
+        }
     }
   }
 }

@@ -33,7 +33,7 @@
 .ivu-table table tr th i{font-size: 14px;vertical-align: middle;margin-left: 5px;}
 
 .ivu-upload button{border: none;padding:0;}
-.table_bottom{padding:15px 25px;line-height: 32px;}
+.table_bottom{padding:15px 0;line-height: 32px;}
 .table_bottom button{display: block;float: right;}
 
 .already_chose,.search_country,.channel_chose,.stencil_chose,.country_setting p,.channel_main{margin: 0 21px;padding: 10px 0;}
@@ -61,6 +61,7 @@
 .channel_setting p{padding: 15px 0;}
 .channel_setting i{font-size: 24px;vertical-align: middle;}
 
+.no_view{cursor: no-drop;color: #ccc;}
 
 
 
