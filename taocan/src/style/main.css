@@ -63,8 +63,8 @@
 
 .no_view{cursor: no-drop;color: #ccc;}
 
-
-
+.search_country .ivu-btn,.channel_chose .ivu-btn{margin-right: 6px;}
+.ivu-btn.get{background: #fff;}
 
 
 

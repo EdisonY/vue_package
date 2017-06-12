@@ -197,108 +197,62 @@
          <h3 class="tc_setting_title">国家配置</h3>
          <div class="already_chose">
              <b>已选国家：</b>
-             <Tag v-if="show" closable @on-close="handleClose">国家一</Tag>
-             <Tag v-if="show" closable @on-close="handleClose">国家二</Tag>
+             <Tag v-for="(item,index) in country_data_already" v-if="item.name" closable @on-close="handleClose(index)">{{ item.name }}</Tag>
              <a class="el-button el-button--info el-button--small">西语地区</a>
          </div>
          <div class="search_country">
-             <el-input v-model="input2" placeholder="请输入内容"></el-input>
+             <el-input v-model="search_country" placeholder="请输入内容"  @input="updateMessage"></el-input>
              <div class="country_list">
                  <ul>
-                     <li class="clearfix">
-                         <span>亚洲</span>
+                     <li class="clearfix" v-for="(item,index) in country_data">
+                         <span>{{item.area}}</span>
                          <div class="country_list_main">
-                             <Button>Default</Button>
-                             <Button>Default</Button>
-                         </div>
-                     </li>
-                     <li class="clearfix">
-                         <span>北美洲</span>
-                         <div class="country_list_main">
-                             <Button>Default</Button>
-                             <Button>Default</Button>
-                         </div>
-                     </li>
-                     <li class="clearfix">
-                         <span>亚洲</span>
-                         <div class="country_list_main">
-                             <Button>Default</Button>
-                             <Button>Default</Button>
-                         </div>
-                     </li>
-                     <li class="clearfix">
-                         <span>北美洲</span>
-                         <div class="country_list_main">
-                             <Button>Default</Button>
-                             <Button>Default</Button>
+                             <Button v-for="countrys in item.country" :class="{ get : countrys.get }" @click="chose_country(countrys)">{{countrys.name}}</Button>
                          </div>
                      </li>
                  </ul>
              </div>
          </div>
-         <div class="channel_chose">
+         <div class="channel_chose" v-if="chose_country_data.length > 0">
             <b>渠道选择：</b>
-            <el-tabs>
-                <el-tab-pane label="美国">
+            <el-tabs v-model="get_country_tabs">
+                <el-tab-pane :label="item.name" :name="item.name" v-for="(item,index) in chose_country_data">
                     <Div class="channel_list_main">
                     <ul>
-                        <li class="clearfix">
-                            <span>手机钱包:</span>
+                        <li class="clearfix" v-for="(way,num) in item.payways">
+                            <span>{{way.name}}:</span>
                             <div class="channel_list">
-                                <Button>Default</Button>
-                                <Button>Default</Button>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <span>手机支付:</span>
-                            <div class="channel_list">
-                                <Button>Default</Button>
-                                <Button>Default</Button>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <span>手机钱包:</span>
-                            <div class="channel_list">
-                                <Button>Default</Button>
-                                <Button>Default</Button>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <span>手机支付:</span>
-                            <div class="channel_list">
-                                <Button>Default</Button>
-                                <Button>Default</Button>
+                                <Button v-for="(btn,nums) in way.channel_payways">{{btn.name}}</Button>
                             </div>
                         </li>
                     </ul>
                     </Div>
                 </el-tab-pane>
-                <el-tab-pane label="俄罗斯"></el-tab-pane>
             </el-tabs>
          </div>
-         <div class="stencil_chose">
+         <div class="stencil_chose" v-if="chose_country_data.length > 0">
              <b>相应模版：</b>
              <Radio-group v-model="phone">
-             <ul class="clearfix">
-                 <li>
-                     <label>
-                         <img src="https://www.baidu.com/img/gaokao_index_1f1d5fb43b95ca4ab0061ba43b887c22.png" />
-                         <Radio label="apple">火影忍者</Radio>
-                     </label>
-                 </li>
-                 <li>
-                     <label>
-                         <img src="https://www.baidu.com/img/gaokao_index_1f1d5fb43b95ca4ab0061ba43b887c22.png" />
-                         <Radio label="apple1">火影忍者</Radio>
-                     </label>
-                 </li>
-                 <li>
-                     <label>
-                         <img src="https://www.baidu.com/img/gaokao_index_1f1d5fb43b95ca4ab0061ba43b887c22.png" />
-                         <Radio label="apple2">火影忍者</Radio>
-                     </label>
-                 </li>
-             </ul>
+                 <ul class="clearfix">
+                     <li>
+                         <label>
+                             <img src="https://www.baidu.com/img/gaokao_index_1f1d5fb43b95ca4ab0061ba43b887c22.png" />
+                             <Radio label="apple">火影忍者</Radio>
+                         </label>
+                     </li>
+                     <li>
+                         <label>
+                             <img src="https://www.baidu.com/img/gaokao_index_1f1d5fb43b95ca4ab0061ba43b887c22.png" />
+                             <Radio label="apple1">火影忍者</Radio>
+                         </label>
+                     </li>
+                     <li>
+                         <label>
+                             <img src="https://www.baidu.com/img/gaokao_index_1f1d5fb43b95ca4ab0061ba43b887c22.png" />
+                             <Radio label="apple2">火影忍者</Radio>
+                         </label>
+                     </li>
+                 </ul>
              </Radio-group>
 
          </div>
@@ -566,7 +520,7 @@ export default {
           pay_switch:false,
           input:'',
           input1:'',
-          input2:'',
+          search_country:'',
           single:'',
           phone: 'apple',
           value: true,
@@ -574,8 +528,11 @@ export default {
           activeName2: 'first',
           activeNames:['1'],
           switch1:true,
+          get_country:false,
+          get_channel:false,
           fileList:[],
           alert_message:'',
+          get_country_tabs:'',
           options: [{
               value: '选项1',
               label: '黄金糕'
@@ -597,23 +554,107 @@ export default {
               description:'描述',
               gamecoin:'10',
               priciCurrency:'USD',
-              pic:'http://www.sdasd.com/asda.jpg'
+              pic:'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2812136344,465892702&fm=58'
           },{
               name: '名字1',
               description:'描述1',
               gamecoin:'11',
               priciCurrency:'USD',
-              pic:'http://www.sdasd.com/asda.jpg'
+              pic:'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2812136344,465892702&fm=58'
           }],
-          props_list:[{}]
+          props_list:[{}],
+          country_data_already:[{
+              name:'国家1'
+          },{
+              name:'国家2'
+          }],
+          country_data:[{
+              area:'亚洲',
+              country:[{
+                  name:'中国',
+                  payways:[{
+                      name:'电子钱包',
+                      channel_payways:[{
+                          name:'skrill'
+                      },
+                      {
+                          name:'skrill1'
+                      },
+                      {
+                          name:'skrill2'
+                      }]
+                  },
+                  {
+                      name:'支付宝',
+                      channel_payways:[{
+                          name:'skrill2'
+                      },
+                      {
+                          name:'skrill12'
+                      },
+                      {
+                          name:'skrill22'
+                      }]
+                  }]
+              },
+              {
+                  name:'日本',
+                  payways:[{
+                      name:'电子钱包',
+                      channel_payways:[{
+                          name:'skrill3'
+                      },
+                      {
+                          name:'skrill13'
+                      },
+                      {
+                          name:'skrill23'
+                      }]
+                  }]
+              }]
+          },
+          {
+              area:'美洲',
+              country:[{
+                  name:'美国',
+                  payways:[{
+                      name:'电子钱包',
+                      channel_payways:[{
+                          name:'skrill4'
+                      },
+                      {
+                          name:'skrill14'
+                      },
+                      {
+                          name:'skrill24'
+                      }]
+                  }]
+              },
+              {
+                  name:'加拿大',
+                  payways:[{
+                      name:'电子钱包',
+                      channel_payways:[{
+                          name:'skrill5'
+                      },
+                      {
+                          name:'skrill15'
+                      },
+                      {
+                          name:'skrill25'
+                      }]
+                  }]
+              }]
+          }],
+          chose_country_data:[]
       }
   },
   methods: {
     handleClick(tab, event) {
         console.log(tab.name);
     },
-    handleClose () {
-         this.show = false;
+    handleClose (index) {
+        this.country_data_already[index].name = ''
     },
     change (status) {
         this.$Message.info('您选择' + status);
@@ -645,7 +686,6 @@ export default {
     },
     copy_pack(e){
         this.copy_pack1 = true;
-        //console.log(e.target.getAttribute('data1'))
     },
     del_list(index,item){
         console.log(item)
@@ -695,6 +735,30 @@ export default {
         for(var key in model){
             console.log(model[key].gamecoin)
         }
+    },
+    updateMessage(){
+        var _this = this;
+        for(var i = 0;i<_this.country_data.length;i++){
+            for(var s = 0;s<_this.country_data[i].country.length;s++){
+                _this.country_data[i].country[s].get = false
+                if(_this.country_data[i].country[s].name.indexOf(_this.search_country) >= 0 && _this.search_country!=''){
+                    _this.country_data[i].country[s].get = true
+                }
+            }
+        }
+    },
+    chose_country(index){
+        this.get_country = true
+        var _this = this
+        for(var i=0;i<_this.chose_country_data.length;i++){
+            if(index.name == _this.chose_country_data[i].name){
+                _this.chose_country_data.splice(i,1)
+                this.get_country_tabs = _this.chose_country_data[0].name
+                return false
+            }
+        }
+        this.chose_country_data.push(index)
+        this.get_country_tabs = index.name
     }
   }
 }
