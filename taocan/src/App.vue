@@ -80,19 +80,19 @@
                           <tr class="ivu-table-row" v-for="(item,index) in pack_list">
                               <td>
                                   <span v-if="pack_edit[index]">{{ item.name }}</span>
-                                  <input type="text" v-if="!pack_edit[index]" v-bind:value="item.name" v-model="item.name" />
+                                  <Input type="text" v-if="!pack_edit[index]" v-bind:value="item.name" v-model="item.name"></Input>
                               </td>
                               <td>
                                   <span v-if="pack_edit[index]">{{ item.description }}</span>
-                                  <input type="text" v-if="!pack_edit[index]" v-bind:value="item.description" v-model="item.description" />
+                                  <Input type="text" v-if="!pack_edit[index]" v-bind:value="item.description" v-model="item.description"></Input>
                               </td>
                               <td>
                                   <span v-if="pack_edit[index]">{{ item.gamecoin }}</span>
-                                  <input type="text" v-if="!pack_edit[index]" v-bind:value="item.gamecoin" v-model="item.gamecoin" />
+                                  <Input type="text" v-if="!pack_edit[index]" v-bind:value="item.gamecoin" v-model="item.gamecoin"></Input>
                               </td>
                               <td>
                                   <span v-if="pack_edit[index]">{{ item.priciCurrency }}</span>
-                                  <input type="text" v-if="!pack_edit[index]" v-bind:value="item.priciCurrency" v-model="item.priciCurrency" />
+                                  <Input type="text" v-if="!pack_edit[index]" v-bind:value="item.priciCurrency" v-model="item.priciCurrency"></Input>
                               </td>
                               <td>
                                   <el-upload v-if="!pack_edit[index]" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
@@ -147,19 +147,19 @@
                           <tr class="ivu-table-row" v-for="(item,index) in props_list">
                               <td>
                                   <span v-if="props_edit[index]">{{ item.name }}</span>
-                                  <input type="text" v-if="!props_edit[index]" v-bind:value="item.name" v-model="item.name" />
+                                  <Input type="text" v-if="!props_edit[index]" v-bind:value="item.name" v-model="item.name"></Input>
                               </td>
                               <td>
                                   <span v-if="props_edit[index]">{{ item.description }}</span>
-                                  <input type="text" v-if="!props_edit[index]" v-bind:value="item.description" v-model="item.description" />
+                                  <Input type="text" v-if="!props_edit[index]" v-bind:value="item.description" v-model="item.description"></Input>
                               </td>
                               <td>
                                   <span v-if="props_edit[index]">{{ item.gamecoin }}</span>
-                                  <input type="text" v-if="!props_edit[index]" v-bind:value="item.gamecoin" v-model="item.gamecoin" />
+                                  <Input type="text" v-if="!props_edit[index]" v-bind:value="item.gamecoin" v-model="item.gamecoin"></Input>
                               </td>
                               <td>
                                   <span v-if="props_edit[index]">{{ item.priciCurrency }}</span>
-                                  <input type="text" v-if="!props_edit[index]" v-bind:value="item.priciCurrency" v-model="item.priciCurrency" />
+                                  <Input type="text" v-if="!props_edit[index]" v-bind:value="item.priciCurrency" v-model="item.priciCurrency"></Input>
                               </td>
                               <td>
                                   <el-upload v-if="!props_edit[index]" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
@@ -195,8 +195,8 @@
      <div class="tc_setting country_setting">
          <i class="num_setting">2</i>
          <h3 class="tc_setting_title">国家配置</h3>
-         <div class="already_chose">
-             <b>已选国家：</b>
+         <div class="already_chose" >
+             <b v-if="country_data_already.length > 0">已选国家：</b>
              <Tag v-for="(item,index) in country_data_already" v-if="item.name" closable @on-close="handleClose(index)">{{ item.name }}</Tag>
              <a class="el-button el-button--info el-button--small">西语地区</a>
          </div>
@@ -207,7 +207,7 @@
                      <li class="clearfix" v-for="(item,index) in country_data">
                          <span>{{item.area}}</span>
                          <div class="country_list_main">
-                             <Button v-for="countrys in item.country" :class="{ get : countrys.get }" @click="chose_country(countrys)">{{countrys.name}}</Button>
+                             <Button v-for="(countrys,index_) in item.country" :class="{ get : countrys.get , chose : countrys.chose}" @click="chose_country(countrys,index,index_)">{{countrys.name}}</Button>
                          </div>
                      </li>
                  </ul>
@@ -303,18 +303,26 @@
                          </tr>
                      </table>
                  </div>
-                 <div class="ivu-table-body">
+                 <div class="ivu-table-body" v-for="(item,index) in channel_set_data">
                      <table>
-                         <tr class="ivu-table-row">
+                         <tr class="ivu-table-row" :class="{ now_tr : item.show_detail}">
                              <td><Checkbox label=""></Checkbox></td>
+                             <td @dblclick="toggle_detail(index)">渠道名称</td>
                              <td></td>
-                             <td></td>
-                             <td><Icon type="edit"></Icon></td>
+                             <td>
+                                 <span v-if="!item.edit_switch">{{item.showname}}</span>
+                                 <Icon type="edit" @click.native="edit_channel(index)" v-if="!item.edit_switch"></Icon>
+                                 <div v-if="item.edit_switch">
+                                     <Input :value="item.showname"></Input>
+                                     <Icon type="checkmark-round" @click.native="save_show_name(index)"></Icon>
+                                     <Icon type="close-round" @click.native="cannel_show_name(index)"></Icon>
+                                 </div>
+                             </td>
                              <td></td>
                              <td><i-switch v-model="switch1" @on-change="change"></i-switch></td>
                              <td><Icon type="android-star"></Icon></td>
                          </tr>
-                         <tr>
+                         <tr v-if="item.show_detail">
                              <td colspan="7">
                                  <Div class="more_info ivu-table-wrapper">
                                      <table>
@@ -461,24 +469,6 @@
                                  </Div>
                              </td>
                          </tr>
-                         <tr class="ivu-table-row">
-                             <td><Checkbox label=""></Checkbox></td>
-                             <td></td>
-                             <td></td>
-                             <td><Icon type="edit"></Icon></td>
-                             <td></td>
-                             <td><i-switch v-model="switch1" @on-change="change"></i-switch></td>
-                             <td><Icon type="android-star"></Icon></td>
-                         </tr>
-                         <tr class="ivu-table-row">
-                             <td><Checkbox label=""></Checkbox></td>
-                             <td></td>
-                             <td></td>
-                             <td><Icon type="edit"></Icon></td>
-                             <td></td>
-                             <td><i-switch v-model="switch1" @on-change="change"></i-switch></td>
-                             <td><Icon type="android-star"></Icon></td>
-                         </tr>
                      </table>
                  </div>
              </div>
@@ -563,11 +553,7 @@ export default {
               pic:'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2812136344,465892702&fm=58'
           }],
           props_list:[{}],
-          country_data_already:[{
-              name:'国家1'
-          },{
-              name:'国家2'
-          }],
+          country_data_already:[],
           country_data:[{
               area:'亚洲',
               country:[{
@@ -646,7 +632,30 @@ export default {
                   }]
               }]
           }],
-          chose_country_data:[]
+          chose_country_data:[],
+          channel_set_data:[{
+              show_detail:false,
+              showname:'asdasd',
+              edit_switch:false
+          },
+          {
+              show_detail:false,
+              showname:'123123123',
+              edit_switch:false
+          },
+          {
+              show_detail:false,
+              showname:'asdasd',
+              edit_switch:false
+          }]
+      }
+  },
+  watch:{
+      channel_set_data:{
+          handler:(val,oldVal)=>{
+              return oldVal
+          },
+          deep:true
       }
   },
   methods: {
@@ -747,18 +756,38 @@ export default {
             }
         }
     },
-    chose_country(index){
+    chose_country(item,index,index_){
         this.get_country = true
         var _this = this
         for(var i=0;i<_this.chose_country_data.length;i++){
-            if(index.name == _this.chose_country_data[i].name){
+            if(item.name == _this.chose_country_data[i].name){
                 _this.chose_country_data.splice(i,1)
-                this.get_country_tabs = _this.chose_country_data[0].name
-                return false
+                _this.country_data_already.splice(i,1)
+                this.country_data[index].country[index_].chose = false
+                if(_this.chose_country_data.length != 0){
+                    _this.get_country_tabs = _this.chose_country_data[0].name
+                }else{
+                    _this.get_country_tabs = ''
+                }
+                return false;
             }
         }
-        this.chose_country_data.push(index)
-        this.get_country_tabs = index.name
+        this.chose_country_data.push(item)
+        this.country_data_already.push(item)
+        this.get_country_tabs = item.name
+        this.country_data[index].country[index_].chose = true
+    },
+    toggle_detail(index){
+        this.channel_set_data[index].show_detail = !this.channel_set_data[index].show_detail
+    },
+    edit_channel(index){
+        this.channel_set_data[index].edit_switch = !this.channel_set_data[index].edit_switch
+    },
+    save_show_name(index){
+        this.channel_set_data[index].edit_switch = false
+    },
+    cannel_show_name(index){
+        this.channel_set_data[index].edit_switch = false
     }
   }
 }

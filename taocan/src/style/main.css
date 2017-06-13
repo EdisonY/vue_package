@@ -39,7 +39,7 @@
 .already_chose,.search_country,.channel_chose,.stencil_chose,.country_setting p,.channel_main{margin: 0 21px;padding: 10px 0;}
 .already_chose a{display: block;float: right;}
 .search_country .el-input{display: inline-block;width: auto;}
-.search_country .country_list,.channel_list_main{margin:10px 0;overflow-y: auto;height: 150px;}
+.search_country .country_list,.channel_list_main{margin:10px 0;overflow-y: auto;max-height: 150px;}
 .search_country .country_list ul li,.channel_chose ul li{padding: 10px 0;border-bottom: 1px dashed #ccc;vertical-align: middle;}
 .search_country .country_list ul li span,.channel_chose ul li span{float: left;height: 32px;line-height: 32px;min-width: 80px;}
 .search_country .country_list ul li .country_list_main,.channel_chose ul li .channel_list{float: left;}
@@ -65,8 +65,14 @@
 
 .search_country .ivu-btn,.channel_chose .ivu-btn{margin-right: 6px;}
 .ivu-btn.get{background: #fff;}
+.ivu-btn.chose{color: #57a3f3;background-color: #fff;border-color: #57a3f3;}
 
+.ivu-input{width: auto;}
 
+.now_tr td{background: #f8f8f9;}
+.ivu-table-body .ivu-input-type{display: inline-block;width: auto;}
+.channel_setting .ivu-table-body .ivu-icon-checkmark-round{color: green;font-size: 14px;}
+.channel_setting .ivu-table-body .ivu-icon-close-round{color: red;font-size: 14px;}
 
 
 
