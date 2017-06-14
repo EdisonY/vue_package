@@ -197,7 +197,7 @@
          <h3 class="tc_setting_title">国家配置</h3>
          <div class="already_chose" >
              <b v-if="country_data_already.length > 0">已选国家：</b>
-             <Tag v-for="(item,index) in country_data_already" v-if="item.name" closable @on-close="handleClose(index)">{{ item.name }}</Tag>
+             <Tag v-for="(item,index) in country_data_already" v-if="item.name" closable @on-close="handleClose(item,index)">{{ item.name }}</Tag>
              <a class="el-button el-button--info el-button--small">西语地区</a>
          </div>
          <div class="search_country">
@@ -288,7 +288,9 @@
                  <div class="ivu-table-header">
                      <table>
                          <tr>
-                             <th><Checkbox>全选</Checkbox></th>
+                             <th>
+                                 <Checkbox @click.native="checkAll()" v-model="checkall">全选</Checkbox>
+                             </th>
                              <th>渠道名称</th>
                              <th>渠道分类</th>
                              <th>
@@ -303,24 +305,31 @@
                          </tr>
                      </table>
                  </div>
+                 <draggable @update="datadragEnd" v-model="channel_set_data" v-if="sort_gk">
                  <div class="ivu-table-body" v-for="(item,index) in channel_set_data">
                      <table>
                          <tr class="ivu-table-row" :class="{ now_tr : item.show_detail}">
-                             <td><Checkbox label=""></Checkbox></td>
-                             <td @dblclick="toggle_detail(index)">渠道名称</td>
+                             <td>
+                                 <Checkbox v-model="item.check" @click.native="check(index)"></Checkbox>
+                             </td>
+                             <td @dblclick="toggle_detail(index)">{{item.showname}}</td>
                              <td></td>
                              <td>
                                  <span v-if="!item.edit_switch">{{item.showname}}</span>
                                  <Icon type="edit" @click.native="edit_channel(index)" v-if="!item.edit_switch"></Icon>
-                                 <div v-if="item.edit_switch">
+                                 <div v-if="item.edit_switch" class="edit_div">
                                      <Input :value="item.showname"></Input>
                                      <Icon type="checkmark-round" @click.native="save_show_name(index)"></Icon>
                                      <Icon type="close-round" @click.native="cannel_show_name(index)"></Icon>
                                  </div>
                              </td>
                              <td></td>
-                             <td><i-switch v-model="switch1" @on-change="change"></i-switch></td>
-                             <td><Icon type="android-star"></Icon></td>
+                             <td>
+                                 <i-switch v-model="item.enabled_stats" @on-change="change"></i-switch>
+                             </td>
+                             <td>
+                                 <Icon type="android-star" :class="{ recommend : item.recommend}" @click.native="change_recommend(index)"></Icon>
+                             </td>
                          </tr>
                          <tr v-if="item.show_detail">
                              <td colspan="7">
@@ -471,14 +480,188 @@
                          </tr>
                      </table>
                  </div>
+                </draggable>
+                <div class="ivu-table-body" v-for="(item,index) in channel_set_data" v-if="!sort_gk">
+                    <table>
+                        <tr class="ivu-table-row" :class="{ now_tr : item.show_detail}">
+                            <td>
+                                <Checkbox v-model="item.check" @click.native="check(index)"></Checkbox>
+                            </td>
+                            <td @dblclick="toggle_detail(index)">{{item.showname}}</td>
+                            <td></td>
+                            <td>
+                                <span v-if="!item.edit_switch">{{item.showname}}</span>
+                                <Icon type="edit" @click.native="edit_channel(index)" v-if="!item.edit_switch"></Icon>
+                                <div v-if="item.edit_switch" class="edit_div">
+                                    <Input :value="item.showname"></Input>
+                                    <Icon type="checkmark-round" @click.native="save_show_name(index)"></Icon>
+                                    <Icon type="close-round" @click.native="cannel_show_name(index)"></Icon>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td>
+                                <i-switch v-model="item.enabled_stats" @on-change="change"></i-switch>
+                            </td>
+                            <td>
+                                <Icon type="android-star" :class="{ recommend : item.recommend}" @click.native="change_recommend(index)"></Icon>
+                            </td>
+                        </tr>
+                        <tr v-if="item.show_detail">
+                            <td colspan="7">
+                                <Div class="more_info ivu-table-wrapper">
+                                    <table>
+                                        <tr>
+                                            <th>套餐名称</th>
+                                            <th>套餐描述</th>
+                                            <th>游戏币</th>
+                                            <th>定价货币</th>
+                                            <th>定价价格</th>
+                                            <th>显示货币</th>
+                                            <th>显示价格</th>
+                                            <th>支付货币</th>
+                                            <th>支付价格</th>
+                                            <th>传递货币</th>
+                                            <th>传递价格</th>
+                                            <th>运营商</th>
+                                            <th>product_id</th>
+                                            <th>奖励钻石</th>
+                                            <th style="width:200px;">操作</th>
+                                        </tr>
+                                        <tr>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>
+                                                <Icon type="edit"></Icon>
+                                                <Icon type="trash-a"></Icon>
+                                                <i-switch v-model="switch1" @on-change="change"></i-switch>
+                                                <Icon type="android-star"></Icon>
+                                                <Icon type="plus-round"></Icon>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>
+                                                <Icon type="android-list"></Icon>
+                                                <Icon type="close-round"></Icon>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </Div>
+                                <Div class="more_info ivu-table-wrapper">
+                                    <table>
+                                        <tr>
+                                            <th>道具类型</th>
+                                            <th>道具名称</th>
+                                            <th>道具名称（外文)</th>
+                                            <th>道具图片</th>
+                                            <th>道具描述</th>
+                                            <th>奖励道具图片</th>
+                                            <th>游戏币</th>
+                                            <th>定价货币</th>
+                                            <th>定价价格</th>
+                                            <th>显示货币</th>
+                                            <th>显示价格</th>
+                                            <th>支付货币</th>
+                                            <th>支付价格</th>
+                                            <th>传递货币</th>
+                                            <th>传递价格</th>
+                                            <th>运营商</th>
+                                            <th>product_id</th>
+                                            <th>奖励钻石</th>
+                                            <th style="width:200px;">操作</th>
+                                        </tr>
+                                        <tr>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>
+                                                <Icon type="edit"></Icon>
+                                                <Icon type="trash-a"></Icon>
+                                                <i-switch v-model="switch1" @on-change="change"></i-switch>
+                                                <Icon type="plus-round"></Icon>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>
+                                                <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                            </td>
+                                            <td>800</td>
+                                            <td>
+                                                <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                            </td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>USD</td>
+                                            <td>800</td>
+                                            <td>800</td>
+                                            <td>USD</td>
+                                            <td>
+                                                <Icon type="android-list"></Icon>
+                                                <Icon type="close-round"></Icon>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </Div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
              </div>
              </div>
              <p>
-                 <Button type="info">开关批处理</Button>
-                 <Button type="warning">排序</Button>
-                 /
-                 <Icon type="android-list"></Icon>
-                 <Icon type="close-round"></Icon>
+                 <Button type="info" v-if="!sort_gk">开关批处理</Button>
+                 <Button type="warning" @click="sort_data" v-if="!sort_gk">排序</Button>
+                 <Icon type="android-list" v-if="sort_gk" @click.native="sort_gk = !sort_gk"></Icon>
+                 <Icon type="close-round" v-if="sort_gk" @click.native="cannle_sort"></Icon>
              </p>
          </div>
      </div>
@@ -492,7 +675,11 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable';
 export default {
+  components:{
+      draggable
+  },
   name: 'app',
   data(){
       return {
@@ -501,6 +688,7 @@ export default {
               0:true,
               1:true
           },
+          sort_gk:false,
           props_edit:false,
           copy_pack1:false,
           modal:false,
@@ -523,6 +711,7 @@ export default {
           fileList:[],
           alert_message:'',
           get_country_tabs:'',
+          checkall:false,
           options: [{
               value: '选项1',
               label: '黄金糕'
@@ -635,19 +824,29 @@ export default {
           chose_country_data:[],
           channel_set_data:[{
               show_detail:false,
-              showname:'asdasd',
-              edit_switch:false
+              showname:'0000000',
+              edit_switch:false,
+              enabled_stats:false,
+              check:false,
+              recommend:true
           },
           {
               show_detail:false,
-              showname:'123123123',
-              edit_switch:false
+              showname:'111111',
+              edit_switch:false,
+              enabled_stats:true,
+              check:true,
+              recommend:false
           },
           {
               show_detail:false,
-              showname:'asdasd',
-              edit_switch:false
-          }]
+              showname:'22222',
+              edit_switch:false,
+              enabled_stats:false,
+              check:false,
+              recommend:true
+          }],
+          old_data:[]
       }
   },
   watch:{
@@ -662,8 +861,21 @@ export default {
     handleClick(tab, event) {
         console.log(tab.name);
     },
-    handleClose (index) {
-        this.country_data_already[index].name = ''
+    handleClose (item,index) {
+        var _this = this
+        for(var i=0;i<_this.chose_country_data.length;i++){
+            if(item.name == _this.chose_country_data[i].name){
+                _this.chose_country_data.splice(i,1)
+                _this.country_data_already.splice(i,1)
+            }
+        }
+        item.chose = false
+
+        if(this.chose_country_data.length == 0){
+            this.get_country_tabs = ''
+        }else{
+            this.get_country_tabs = this.chose_country_data[0].name
+        }
     },
     change (status) {
         this.$Message.info('您选择' + status);
@@ -729,7 +941,6 @@ export default {
         model[index] = false
     },
     emp_pcak(index,model){
-        //console.log(JSON.stringify(model))
         console.log(model[index])
         for(var key in model[index]){
             model[index][key] = ''
@@ -788,6 +999,55 @@ export default {
     },
     cannel_show_name(index){
         this.channel_set_data[index].edit_switch = false
+    },
+    checkAll(){
+        var s = 0;
+        for(var i=0;i<this.channel_set_data.length;i++){
+            if(this.channel_set_data[i].check){
+                s++
+            }
+        }
+        if(s == this.channel_set_data.length){
+            for(var i=0;i<this.channel_set_data.length;i++){
+                this.channel_set_data[i].check = false
+                this.checkall = false
+            }
+        }else{
+            for(var i=0;i<this.channel_set_data.length;i++){
+                this.channel_set_data[i].check = true
+                this.checkall = true
+            }
+        }
+    },
+    check(index){
+        this.channel_set_data[index].check = !this.channel_set_data[index].check
+        var s = 0;
+        for(var i=0;i<this.channel_set_data.length;i++){
+            if(this.channel_set_data[i].check){
+                s++
+            }
+        }
+        if(s == this.channel_set_data.length){
+            this.checkall = true
+        }else{
+            this.checkall = false
+        }
+    },
+    change_recommend(index){
+        this.channel_set_data[index].recommend = !this.channel_set_data[index].recommend
+    },
+    datadragEnd:function(evt){
+        console.log('拖动前的索引：'+evt.oldIndex);
+        console.log('拖动后的索引：'+evt.newIndex);
+        console.log(evt)
+    },
+    sort_data(){
+        this.sort_gk = !this.sort_gk
+        this.old_data = this.channel_set_data
+    },
+    cannle_sort(){
+        this.sort_gk = !this.sort_gk
+        this.channel_set_data = this.old_data
     }
   }
 }

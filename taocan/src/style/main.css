@@ -72,8 +72,8 @@
 .now_tr td{background: #f8f8f9;}
 .ivu-table-body .ivu-input-type{display: inline-block;width: auto;}
 .channel_setting .ivu-table-body .ivu-icon-checkmark-round{color: green;font-size: 14px;}
-.channel_setting .ivu-table-body .ivu-icon-close-round{color: red;font-size: 14px;}
-
+.channel_setting .ivu-table-body .edit_div .ivu-icon-close-round{color: red;font-size: 14px;}
+.recommend{color: #f90}
 
 
 
