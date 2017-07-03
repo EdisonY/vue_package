@@ -10,28 +10,24 @@ import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import api from './config/api'
 import draggable from 'vuedraggable'
+import VueForm from 'vue-form'
+
 Vue.prototype.$api = api
-
-
 Vue.use(ElementUI)
 Vue.use(VueI18n)
 Vue.use(iView)
 Vue.use(draggable)
-Vue.config.productionTip = false
+Vue.use(VueForm);
+Vue.config.productionTip = true
 
 const i18n = new VueI18n({
-    locale: 'zh',
+    locale: navigator.language,
     messages: {
-     zh: {
-       pay_switch: '支付开关'
-     },
-     en: {
-       pay_switch: '支付开关'
-     }
+        'zh-CN': require('./common/lang/zh'),
+        'en-US': require('./common/lang/en')
     }
 })
 
-/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
@@ -39,6 +35,7 @@ new Vue({
   iView,
   ElementUI,
   draggable,
+  VueForm,
   template: '<App/>',
   components: { App }
 })

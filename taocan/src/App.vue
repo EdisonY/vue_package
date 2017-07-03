@@ -1,28 +1,15 @@
 <template>
   <div id="app">
       <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-        <el-tab-pane name="first">
-            <span slot="label">web<i class="el-icon-circle-check"></i></span>
-        </el-tab-pane>
-        <el-tab-pane name="second">
-            <span slot="label">Facebook<i class="el-icon-circle-check"></i></span>
-        </el-tab-pane>
-        <el-tab-pane name="third">
-            <span slot="label">Google<i class="el-icon-circle-check"></i></span>
-        </el-tab-pane>
-        <el-tab-pane name="fourth">
-            <span slot="label">IOS<i class="el-icon-circle-check"></i></span>
-        </el-tab-pane>
-        <el-tab-pane name="fives">
-            <span slot="label">Android<i class="el-icon-circle-check"></i></span>
-        </el-tab-pane>
-        <el-tab-pane name="six">
-            <span slot="label">Steam<i class="el-icon-circle-check"></i></span>
-        </el-tab-pane>
+        <div v-for="(item,index) in tab_data">
+            <el-tab-pane :name="item" :label="item">
+                <span slot="label">{{ item }}<i class="el-icon-circle-check"></i></span>
+            </el-tab-pane>
+        </div>
       </el-tabs>
      <h3 class="tc_title">手游-装甲突袭-全球包</h3>
      <div class="tc_right_btn">
-         <strong>{{ $t('pay_switch') }}</strong>
+         <strong>{{ $t('Hello World') }}</strong>
          <i-switch @on-change="kaiguan" v-model="kaiguan_kg">
             <span slot="open">开</span>
             <span slot="close">关</span>
@@ -55,16 +42,204 @@
              <el-input v-model="input1" placeholder="游戏币名称"></el-input>
          </div>
          <el-tabs>
-          <el-tab-pane label="套餐配置">
+          <el-tab-pane label="套餐配置"  v-loading.body="pack_loading">
               <div class="ivu-table-wrapper">
               <div class="ivu-table ivu-table-border">
                   <div class="ivu-table-header">
                       <table>
                           <tr>
-                              <th>{{ $t('pay_switch') }}</th>
-                              <th>{{ $t('pay_switch') }}</th>
+                              <th>套餐名称</th>
+                              <th>套餐描述</th>
                               <th>游戏币</th>
-                              <th>{{ $t('pay_switch') }}</th>
+                              <th>定价货币</th>
+                              <th>定价价格</th>
+                              <th>显示货币</th>
+                              <th>显示价格</th>
+                              <th>支付货币</th>
+                              <th>支付价格</th>
+                              <th>传递货币</th>
+                              <th>传递价格</th>
+                              <th>
+                                  奖励钻石
+                                  <Tooltip content="这里是提示文字">
+                                        <Icon type="help-circled"></Icon>
+                                  </Tooltip>
+                              </th>
+                              <th>
+                                  钻石logo
+                                  <Tooltip content="这里是提示文字">
+                                        <Icon type="help-circled"></Icon>
+                                  </Tooltip>
+                              </th>
+                              <th>
+                                   奖励钻石logo
+                                  <Tooltip content="这里是提示文字">
+                                        <Icon type="help-circled"></Icon>
+                                  </Tooltip>
+                              </th>
+                              <th>操作</th>
+                          </tr>
+                      </table>
+                  </div>
+                  <div class="ivu-table-body" v-for="(item,index) in pack_list">
+                      <form @submit.prevent="save_pack(index,item,item.amount_id)">
+                      <table>
+                          <tr class="ivu-table-row">
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.package_name }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.package_name" v-model="item.package_name" required type="name" class="my_input"></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.package_description }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.package_description" v-model="item.package_description" class="my_input" required type="name"></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.virtual_goods }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.virtual_goods" v-model="item.virtual_goods" class="my_input" required type="number" min="0" ></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.price_currency }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.price_currency" v-model="item.price_currency" class="my_input" required type="name"  ></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.price }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.price" v-model="item.price" class="my_input" required type="name"  ></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.show_currency }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.show_currency" v-model="item.show_currency" class="my_input" required type="name"  ></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.show_price }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.show_price" v-model="item.show_price" class="my_input" required type="name"  ></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.pay_currency }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.pay_currency" v-model="item.pay_currency" class="my_input" required type="name"  ></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.pay_price }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.pay_price" v-model="item.pay_price" class="my_input" required type="name"  ></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.transfer_currency }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.transfer_currency" v-model="item.transfer_currency" class="my_input" required type="name"  ></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.transfer_price }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.transfer_price" v-model="item.transfer_price" class="my_input" required type="name"  ></input>
+                              </td>
+                              <td>
+                                  <span v-if="item.extra_tag">{{ item.virtual_goods_reward }}</span>
+                                  <input v-if="!item.extra_tag" :value="item.virtual_goods_reward" v-model="item.virtual_goods_reward" class="my_input" required type="name"  ></input>
+                              </td>
+
+                              <td>
+                                  <el-upload v-if="!item.extra_tag" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                  <img v-if="item.extra_tag" :src="item.object_url" />
+                              </td>
+                              <td>
+                                  <el-upload v-if="!item.extra_tag" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                  <img v-if="item.extra_tag" :src="item.object_url_reward" />
+                              </td>
+                              <td>
+                                  <Icon type="edit" @click.native="edit_pack(index,pack_list)" v-if="item.extra_tag"></Icon>
+                                  <Icon type="trash-a" @click.native="del_list(index,item,item.amount_id)" v-if="item.extra_tag && index != 0"></Icon>
+                                  <button type="submit" class="ivu-icon ivu-icon-android-list my_submit" v-if="!item.extra_tag"></button>
+                                  <Icon type="close-round" @click.native="emp_pcak(index,item)" v-if="!item.extra_tag" ></Icon>
+                              </td>
+                          </tr>
+                      </table>
+                      </form>
+                  </div>
+                  <div class="ivu-table-body" v-if="pack_list.length == 0" >
+                      <form @submit.prevent="created_base('package')">
+                          <table>
+                              <tr v-for="(item,index) in temporary">
+                                  <td>
+                                      <input v-model="item.package_name" required type="name" class="my_input"></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.package_description" class="my_input" required type="name"></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.virtual_goods" class="my_input" required type="number" min="0" ></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.price_currency" class="my_input" required type="name"  ></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.price" class="my_input" required type="name"  ></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.show_currency" class="my_input" required type="name"  ></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.show_price" class="my_input" required type="name"  ></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.pay_currency" class="my_input" required type="name"  ></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.pay_price" class="my_input" required type="name"  ></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.transfer_currency" class="my_input" required type="name"  ></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.transfer_price" class="my_input" required type="name"  ></input>
+                                  </td>
+                                  <td>
+                                      <input v-model="item.virtual_goods_reward" class="my_input" required type="name"  ></input>
+                                  </td>
+
+                                  <td>
+                                      <el-upload  class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                  </td>
+                                  <td>
+                                      <el-upload  class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                  </td>
+                                  <td>
+                                      <Icon type="trash-a" @click.native="del_list(index,temporary)" v-if="index != 0"></Icon>
+                                      <Icon type="ios-copy" @click.native="copy_tr(index,item,temporary)"></Icon>
+                                      <Icon type="plus-round" @click.native="add_tr(index,temporary)"></Icon>
+                                  </td>
+                              </tr>
+                          </table>
+                          <button type="submit" class="my_btn tijiao_btn" v-if="pack_list.length == 0">确认提交</button>
+                      </form>
+                  </div>
+
+                  <div class="errors" v-if="myform.$submitted">
+                      <p class="bg-danger text-center" v-if="myform.name.$error.required">请输入用户名.</p>
+                      <p class="bg-danger text-center" v-if="myform.email.$error.email">请输入正确的邮箱.</p>
+                  </div>
+              </div>
+              </div>
+              <div class="table_bottom">
+                  套餐在支付页面的显示顺序：
+                  <Tooltip content="按照游戏币的顺序（由小到大）排序" placement="top">
+                      <Icon type="arrow-up-c" @click.native="sort_list(pack_list,1)"></Icon>
+                  </Tooltip>
+                  <Tooltip content="按照游戏币的倒序（由大到小）排序" placement="top">
+                      <Icon type="arrow-down-c" @click.native="sort_list(pack_list,0)"></Icon>
+                  </Tooltip>
+
+                  <Button type="primary" v-if="pack_list.length != 0" @click.native="add_tr(pack_list.length - 1,pack_list)">新增套餐</Button>
+              </div>
+
+          </el-tab-pane>
+          <el-tab-pane label="道具配置">
+              <form @submit.prevent="onSubmit('sss')">
+              <div class="ivu-table-wrapper">
+              <div class="ivu-table ivu-table-border">
+                  <div class="ivu-table-header">
+                      <table>
+                          <tr>
+                              <th>{{ $t('Hello World') }}</th>
+                              <th>{{ $t('Hello World') }}</th>
+                              <th>游戏币</th>
+                              <th>{{ $t('Hello World') }}</th>
                               <th>
                                   钻石logo
                                   <Tooltip content="这里是提示文字">
@@ -79,35 +254,61 @@
                       <table>
                           <tr class="ivu-table-row" v-for="(item,index) in pack_list">
                               <td>
-                                  <span v-if="pack_edit[index]">{{ item.name }}</span>
-                                  <Input type="text" v-if="!pack_edit[index]" v-bind:value="item.name" v-model="item.name"></Input>
+                                  <span v-if="item.kg">{{ item.name }}</span>
+                                  <input v-if="!item.kg" :value="item.name" v-model="item.name" required type="number" min="0" class="my_input"></input>
                               </td>
                               <td>
-                                  <span v-if="pack_edit[index]">{{ item.description }}</span>
-                                  <Input type="text" v-if="!pack_edit[index]" v-bind:value="item.description" v-model="item.description"></Input>
+                                  <span v-if="item.kg">{{ item.description }}</span>
+                                  <input v-if="!item.kg" :value="item.description" v-model="item.description" class="my_input" required type="name"></input>
                               </td>
                               <td>
-                                  <span v-if="pack_edit[index]">{{ item.gamecoin }}</span>
-                                  <Input type="text" v-if="!pack_edit[index]" v-bind:value="item.gamecoin" v-model="item.gamecoin"></Input>
+                                  <span v-if="item.kg">{{ item.gamecoin }}</span>
+                                  <input v-if="!item.kg" :value="item.gamecoin" v-model="item.gamecoin" class="my_input" required type="number" min="0" ></input>
                               </td>
                               <td>
-                                  <span v-if="pack_edit[index]">{{ item.priciCurrency }}</span>
-                                  <Input type="text" v-if="!pack_edit[index]" v-bind:value="item.priciCurrency" v-model="item.priciCurrency"></Input>
+                                  <span v-if="item.kg">{{ item.priciCurrency }}</span>
+                                  <input v-if="!item.kg" :value="item.priciCurrency" v-model="item.priciCurrency" class="my_input" required type="number" min="0" ></input>
                               </td>
                               <td>
-                                  <el-upload v-if="!pack_edit[index]" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
-                                  <img v-if="pack_edit[index]" v-bind:src="item.pic" />
+                                  <el-upload v-if="!item.kg" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                  <img v-if="item.kg" v-bind:src="item.pic" />
                               </td>
                               <td>
-                                  <Icon type="edit" @click.native="edit_pack(index,pack_edit)" v-if="pack_edit[index]"></Icon>
-                                  <Icon type="trash-a" @click.native="del_list(index,pack_list)" v-if="pack_edit[index]"></Icon>
-                                  <!--<Icon type="ios-copy" @click.native="copy_tr(index)" v-if="item.name"></Icon>-->
-                                  <Icon type="plus-round" @click.native="add_tr(index,pack_list,pack_edit)" v-if="pack_edit[index]"></Icon>
-                                  <Icon type="ivu-icon ivu-icon-android-list" @click.native="save_pack(index,pack_edit)" v-if="!pack_edit[index]"></Icon>
-                                  <Icon type="close-round" @click.native="emp_pcak(index,pack_list)" v-if="!pack_edit[index]" ></Icon>
+                                  <Icon type="edit" @click.native="edit_pack(index,pack_list)" v-if="item.kg"></Icon>
+                                  <Icon type="trash-a" @click.native="del_list(index,pack_list)" v-if="item.kg && pack_list.length > 1"></Icon>
+                                  <!-- <Icon type="ios-copy" @click.native="copy_tr(index,item,pack_list)" v-if="item.kg"></Icon>
+                                  <Icon type="plus-round" @click.native="add_tr(index,pack_list)" v-if="item.kg"></Icon> -->
+                                  <button class="ivu-icon ivu-icon-android-list my_submit" @click.native="save_pack(index,item)" v-if="!item.kg" type="submit"></button>
+                                  <Icon type="close-round" @click.native="emp_pcak(index,item)" v-if="!item.kg" ></Icon>
+                              </td>
+                          </tr>
+                          <tr v-if="pack_list.length == 0" v-for="(item,index) in temporary">
+                              <td>
+                                  <input required type="number" v-model="item.name" min="0" class="my_input"></input>
+                              </td>
+                              <td>
+                                  <input class="my_input" v-model="item.description" required type="name"></input>
+                              </td>
+                              <td>
+                                  <input class="my_input" v-model="item.gamecoin" required type="number" min="0" ></input>
+                              </td>
+                              <td>
+                                  <input class="my_input" v-model="item.priciCurrency" required type="number" min="0" ></input>
+                              </td>
+                              <td>
+                                  <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                              </td>
+                              <td>
+                                  <Icon type="trash-a" @click.native="del_list(index,temporary)" v-if="index != 0"></Icon>
+                                  <Icon type="ios-copy" @click.native="copy_tr(index,item,temporary)"></Icon>
+                                  <Icon type="plus-round" @click.native="add_tr(index,temporary)"></Icon>
                               </td>
                           </tr>
                       </table>
+                      <div class="errors" v-if="myform.$submitted">
+                          <p class="bg-danger text-center" v-if="myform.name.$error.required">请输入用户名.</p>
+                          <p class="bg-danger text-center" v-if="myform.email.$error.email">请输入正确的邮箱.</p>
+                      </div>
                   </div>
               </div>
               </div>
@@ -119,75 +320,10 @@
                   <Tooltip content="按照游戏币的倒序（由大到小）排序" placement="top">
                       <Icon type="arrow-down-c" @click.native="sort_list(pack_list,0)"></Icon>
                   </Tooltip>
-                  <Button type="primary">确认提交</Button>
+                  <button type="submit" class="my_btn" v-if="pack_list.length == 0">确认提交</button>
+                  <Button type="primary" v-if="pack_list.length != 0" @click.native="add_tr(pack_list.length - 1,pack_list)">新增套餐</Button>
               </div>
-          </el-tab-pane>
-          <el-tab-pane label="道具配置">
-              <div class="ivu-table-wrapper">
-              <div class="ivu-table ivu-table-border">
-                  <div class="ivu-table-header">
-                      <table>
-                          <tr>
-                              <th>{{ $t('pay_switch') }}</th>
-                              <th>{{ $t('pay_switch') }}</th>
-                              <th>{{ $t('pay_switch') }}</th>
-                              <th>{{ $t('pay_switch') }}</th>
-                              <th>
-                                  钻石logo
-                                  <Tooltip content="这里是提示文字">
-                                        <Icon type="help-circled"></Icon>
-                                  </Tooltip>
-                              </th>
-                              <th>操作</th>
-                          </tr>
-                      </table>
-                  </div>
-                  <div class="ivu-table-body">
-                      <table>
-                          <tr class="ivu-table-row" v-for="(item,index) in props_list">
-                              <td>
-                                  <span v-if="props_edit[index]">{{ item.name }}</span>
-                                  <Input type="text" v-if="!props_edit[index]" v-bind:value="item.name" v-model="item.name"></Input>
-                              </td>
-                              <td>
-                                  <span v-if="props_edit[index]">{{ item.description }}</span>
-                                  <Input type="text" v-if="!props_edit[index]" v-bind:value="item.description" v-model="item.description"></Input>
-                              </td>
-                              <td>
-                                  <span v-if="props_edit[index]">{{ item.gamecoin }}</span>
-                                  <Input type="text" v-if="!props_edit[index]" v-bind:value="item.gamecoin" v-model="item.gamecoin"></Input>
-                              </td>
-                              <td>
-                                  <span v-if="props_edit[index]">{{ item.priciCurrency }}</span>
-                                  <Input type="text" v-if="!props_edit[index]" v-bind:value="item.priciCurrency" v-model="item.priciCurrency"></Input>
-                              </td>
-                              <td>
-                                  <el-upload v-if="!props_edit[index]" class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
-                                  <img v-if="props_edit[index]" v-bind:src="item.pic" />
-                              </td>
-                              <td>
-                                  <Icon type="edit" @click.native="edit_pack(index)" v-if="props_edit[index]"></Icon>
-                                  <Icon type="trash-a" @click.native="del_list(index)" v-if="props_edit[index]"></Icon>
-                                  <Icon type="ios-copy" @click.native="copy_tr(index,props_list)" v-if="!props_edit[index]"></Icon>
-                                  <Icon type="plus-round" @click.native="add_tr(index,props_list,props_edit)" v-if="!props_edit[index]"></Icon>
-                                  <Icon type="ivu-icon ivu-icon-android-list" @click.native="save_pack(index)" v-if="props_edit[index]"></Icon>
-                                  <Icon type="close-round" @click.native="emp_pcak(index)" v-if="props_edit[index]" ></Icon>
-                              </td>
-                          </tr>
-                      </table>
-                  </div>
-              </div>
-              </div>
-              <div class="table_bottom">
-                  套餐在支付页面的显示顺序：
-                  <Tooltip content="按照游戏币的顺序（由小到大）排序" placement="top">
-                      <Icon type="arrow-up-c"></Icon>
-                  </Tooltip>
-                  <Tooltip content="按照游戏币的倒序（由大到小）排序" placement="top">
-                      <Icon type="arrow-down-c"></Icon>
-                  </Tooltip>
-                  <Button type="primary">确认提交</Button>
-              </div>
+              </form>
           </el-tab-pane>
         </el-tabs>
 
@@ -222,7 +358,7 @@
                         <li class="clearfix" v-for="(way,num) in item.payways">
                             <span>{{way.name}}:</span>
                             <div class="channel_list">
-                                <Button v-for="(btn,nums) in way.channel_payways">{{btn.name}}</Button>
+                                <Button v-for="(btn,nums) in way.channel_payways" :class="{chose : btn.chose }"  @click.native="chose_way(way.channel_payways,btn)">{{btn.name}}</Button>
                             </div>
                         </li>
                     </ul>
@@ -257,7 +393,7 @@
 
          </div>
          <p class="clearfix">
-             <Button type="primary">确认提交</Button>
+             <Button type="primary" @click="show_load()" :disabled="chose_country_data.length == 0" v-loading.fullscreen.lock="fullscreenLoading">确认提交</Button>
          </p>
      </div>
      <div class="tc_setting channel_setting">
@@ -305,197 +441,22 @@
                          </tr>
                      </table>
                  </div>
-                 <draggable @update="datadragEnd" v-model="channel_set_data" v-if="sort_gk">
-                 <div class="ivu-table-body" v-for="(item,index) in channel_set_data">
-                     <table>
-                         <tr class="ivu-table-row" :class="{ now_tr : item.show_detail}">
-                             <td>
-                                 <Checkbox v-model="item.check" @click.native="check(index)"></Checkbox>
-                             </td>
-                             <td @dblclick="toggle_detail(index)">{{item.showname}}</td>
-                             <td></td>
-                             <td>
-                                 <span v-if="!item.edit_switch">{{item.showname}}</span>
-                                 <Icon type="edit" @click.native="edit_channel(index)" v-if="!item.edit_switch"></Icon>
-                                 <div v-if="item.edit_switch" class="edit_div">
-                                     <Input :value="item.showname"></Input>
-                                     <Icon type="checkmark-round" @click.native="save_show_name(index)"></Icon>
-                                     <Icon type="close-round" @click.native="cannel_show_name(index)"></Icon>
-                                 </div>
-                             </td>
-                             <td></td>
-                             <td>
-                                 <i-switch v-model="item.enabled_stats" @on-change="change"></i-switch>
-                             </td>
-                             <td>
-                                 <Icon type="android-star" :class="{ recommend : item.recommend}" @click.native="change_recommend(index)"></Icon>
-                             </td>
-                         </tr>
-                         <tr v-if="item.show_detail">
-                             <td colspan="7">
-                                 <Div class="more_info ivu-table-wrapper">
-                                     <table>
-                                         <tr>
-                                             <th>套餐名称</th>
-                                             <th>套餐描述</th>
-                                             <th>游戏币</th>
-                                             <th>定价货币</th>
-                                             <th>定价价格</th>
-                                             <th>显示货币</th>
-                                             <th>显示价格</th>
-                                             <th>支付货币</th>
-                                             <th>支付价格</th>
-                                             <th>传递货币</th>
-                                             <th>传递价格</th>
-                                             <th>运营商</th>
-                                             <th>product_id</th>
-                                             <th>奖励钻石</th>
-                                             <th style="width:200px;">操作</th>
-                                         </tr>
-                                         <tr>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>
-                                                 <Icon type="edit"></Icon>
-                                                 <Icon type="trash-a"></Icon>
-                                                 <i-switch v-model="switch1" @on-change="change"></i-switch>
-                                                 <Icon type="android-star"></Icon>
-                                                 <Icon type="plus-round"></Icon>
-                                             </td>
-                                         </tr>
-                                         <tr>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>
-                                                 <Icon type="android-list"></Icon>
-                                                 <Icon type="close-round"></Icon>
-                                             </td>
-                                         </tr>
-                                     </table>
-                                 </Div>
-                                 <Div class="more_info ivu-table-wrapper">
-                                     <table>
-                                         <tr>
-                                             <th>道具类型</th>
-                                             <th>道具名称</th>
-                                             <th>道具名称（外文)</th>
-                                             <th>道具图片</th>
-                                             <th>道具描述</th>
-                                             <th>奖励道具图片</th>
-                                             <th>游戏币</th>
-                                             <th>定价货币</th>
-                                             <th>定价价格</th>
-                                             <th>显示货币</th>
-                                             <th>显示价格</th>
-                                             <th>支付货币</th>
-                                             <th>支付价格</th>
-                                             <th>传递货币</th>
-                                             <th>传递价格</th>
-                                             <th>运营商</th>
-                                             <th>product_id</th>
-                                             <th>奖励钻石</th>
-                                             <th style="width:200px;">操作</th>
-                                         </tr>
-                                         <tr>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>
-                                                 <Icon type="edit"></Icon>
-                                                 <Icon type="trash-a"></Icon>
-                                                 <i-switch v-model="switch1" @on-change="change"></i-switch>
-                                                 <Icon type="plus-round"></Icon>
-                                             </td>
-                                         </tr>
-                                         <tr>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>
-                                                 <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
-                                             </td>
-                                             <td>800</td>
-                                             <td>
-                                                 <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
-                                             </td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>USD</td>
-                                             <td>800</td>
-                                             <td>800</td>
-                                             <td>USD</td>
-                                             <td>
-                                                 <Icon type="android-list"></Icon>
-                                                 <Icon type="close-round"></Icon>
-                                             </td>
-                                         </tr>
-                                     </table>
-                                 </Div>
-                             </td>
-                         </tr>
-                     </table>
-                 </div>
-                </draggable>
-                <div class="ivu-table-body" v-for="(item,index) in channel_set_data" v-if="!sort_gk">
+
+                <div class="ivu-table-body" v-for="(item,indexs) in channel_set_data" v-if="!sort_gk">
                     <table>
                         <tr class="ivu-table-row" :class="{ now_tr : item.show_detail}">
                             <td>
-                                <Checkbox v-model="item.check" @click.native="check(index)"></Checkbox>
+                                <Checkbox v-model="item.check" @click.native="check(indexs)"></Checkbox>
                             </td>
-                            <td @dblclick="toggle_detail(index)">{{item.showname}}</td>
+                            <td @dblclick="toggle_detail(indexs)">{{item.showname}}</td>
                             <td></td>
                             <td>
                                 <span v-if="!item.edit_switch">{{item.showname}}</span>
-                                <Icon type="edit" @click.native="edit_channel(index)" v-if="!item.edit_switch"></Icon>
+                                <Icon type="edit" @click.native="edit_channel(indexs)" v-if="!item.edit_switch"></Icon>
                                 <div v-if="item.edit_switch" class="edit_div">
                                     <Input :value="item.showname"></Input>
-                                    <Icon type="checkmark-round" @click.native="save_show_name(index)"></Icon>
-                                    <Icon type="close-round" @click.native="cannel_show_name(index)"></Icon>
+                                    <Icon type="checkmark-round" @click.native="save_show_name(indexs)"></Icon>
+                                    <Icon type="close-round" @click.native="cannel_show_name(indexs)"></Icon>
                                 </div>
                             </td>
                             <td></td>
@@ -503,12 +464,13 @@
                                 <i-switch v-model="item.enabled_stats" @on-change="change"></i-switch>
                             </td>
                             <td>
-                                <Icon type="android-star" :class="{ recommend : item.recommend}" @click.native="change_recommend(index)"></Icon>
+                                <Icon type="android-star" :class="{ recommend : item.recommend}" @click.native="change_recommend(indexs)"></Icon>
                             </td>
                         </tr>
                         <tr v-if="item.show_detail">
                             <td colspan="7">
                                 <Div class="more_info ivu-table-wrapper">
+                                    <form @submit.prevent="onSubmit('sss')">
                                     <table>
                                         <tr>
                                             <th>套餐名称</th>
@@ -527,52 +489,78 @@
                                             <th>奖励钻石</th>
                                             <th style="width:200px;">操作</th>
                                         </tr>
-                                        <tr>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
+                                        <tr v-for="(items,index) in item.pack">
                                             <td>
-                                                <Icon type="edit"></Icon>
-                                                <Icon type="trash-a"></Icon>
-                                                <i-switch v-model="switch1" @on-change="change"></i-switch>
-                                                <Icon type="android-star"></Icon>
-                                                <Icon type="plus-round"></Icon>
+                                                <span v-if="!items.kg">{{items.name}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.name"></input>
                                             </td>
-                                        </tr>
-                                        <tr>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
                                             <td>
-                                                <Icon type="android-list"></Icon>
-                                                <Icon type="close-round"></Icon>
+                                                <span v-if="!items.kg">{{items.miaoshu}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.miaoshu"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.gamecoin}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.gamecoin"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.dingjia}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.dingjia"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.xianshi}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.xianshi"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.zhichi}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.zhichi"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.zhifu}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.zhifu"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.chuanti}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.chuanti"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.chuandi}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.chuandi"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.yunying}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.yunying"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.id}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.id"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.jiangli}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.jiangli"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.name1}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.name1"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.name2}}</span>
+                                                <input class="my_input" required type="name" v-if="items.kg" :value="items.name2"></input>
+                                            </td>
+                                            <td>
+                                                <Icon type="edit" @click.native="edit_pack(index,item.pack)" v-if="!items.kg"></Icon>
+                                                <Icon type="trash-a" v-if="!items.kg"></Icon>
+                                                <i-switch v-model="switch1" @on-change="change" v-if="!items.kg"></i-switch>
+                                                <Icon type="android-star" v-if="!items.kg"></Icon>
+                                                <Icon type="plus-round" @click.native="add(index,item.pack)" v-if="!items.kg"></Icon>
+                                                <button class="ivu-icon ivu-icon-android-list my_submit" @click.native="save_pack(index,items)" v-if="items.kg" type="submit"></button>
+                                                <Icon type="close-round" @click.native="comeback(index,items)" v-if="items.kg" ></Icon>
                                             </td>
                                         </tr>
                                     </table>
+                                    </form>
                                 </Div>
                                 <Div class="more_info ivu-table-wrapper">
+                                    <form @submit.prevent="onSubmit('sss')">
                                     <table>
                                         <tr>
                                             <th>道具类型</th>
@@ -595,70 +583,129 @@
                                             <th>奖励钻石</th>
                                             <th style="width:200px;">操作</th>
                                         </tr>
-                                        <tr>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>800</td>
-                                            <td>USD</td>
+                                        <tr v-for="(items,index) in item.tool">
                                             <td>
-                                                <Icon type="edit"></Icon>
-                                                <Icon type="trash-a"></Icon>
-                                                <i-switch v-model="switch1" @on-change="change"></i-switch>
-                                                <Icon type="plus-round"></Icon>
+                                                <span v-if="!items.kg">{{items.name}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.name"></input>
                                             </td>
-                                        </tr>
-                                        <tr>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
                                             <td>
-                                                <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                                <span v-if="!items.kg">{{items.miaoshu}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.miaoshu"></input>
                                             </td>
-                                            <td>800</td>
                                             <td>
-                                                <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"><Button type="ghost" icon="images"></Button></el-upload>
+                                                <span v-if="!items.kg">{{items.gamecoin}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.gamecoin"></input>
                                             </td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>USD</td>
-                                            <td>USD</td>
-                                            <td>800</td>
-                                            <td>800</td>
-                                            <td>USD</td>
                                             <td>
-                                                <Icon type="android-list"></Icon>
-                                                <Icon type="close-round"></Icon>
+                                                <span v-if="!items.kg">{{items.dingjia}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.dingjia"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.xianshi}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.xianshi"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.zhichi}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.zhichi"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.zhifu}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.zhifu"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.chuanti}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.chuanti"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.chuandi}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.chuandi"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.yunying}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.yunying"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.id}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.id"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.jiangli}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.jiangli"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.name1}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.name1"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.name2}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.name2"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.name1}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.name1"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.name2}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.name3"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.name1}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.name4"></input>
+                                            </td>
+                                            <td>
+                                                <span v-if="!items.kg">{{items.name2}}</span>
+                                                <input class="my_input" required type="name"v-if="items.kg" :value="items.name5"></input>
+                                            </td>
+                                            <td>
+                                                <Icon type="edit" @click.native="edit_pack(index,item.tool)" v-if="!items.kg"></Icon>
+                                                <Icon type="trash-a" v-if="!items.kg"></Icon>
+                                                <i-switch v-model="switch1" @on-change="change" v-if="!items.kg"></i-switch>
+                                                <Icon type="android-star" v-if="!items.kg"></Icon>
+                                                <Icon type="plus-round" @click.native="add(index,item.tool)" v-if="!items.kg"></Icon>
+                                                <button class="ivu-icon ivu-icon-android-list my_submit" type="submit" @click.native="save_pack(index,items)" v-if="items.kg"></button>
+                                                <Icon type="close-round" @click.native="comeback(index,items)" v-if="items.kg" ></Icon>
                                             </td>
                                         </tr>
                                     </table>
+                                    </form>
                                 </Div>
                             </td>
                         </tr>
                     </table>
                 </div>
+                <draggable @update="datadragEnd" v-model="channel_set_data" v-if="sort_gk">
+                <div class="ivu-table-body sort_table" v-for="(item,index) in channel_set_data">
+                    <table>
+                        <tr class="ivu-table-row" :class="{ now_tr : item.show_detail}">
+                            <td>
+                                <Checkbox v-model="item.check" @click.native="check(index)"></Checkbox>
+                            </td>
+                            <td>{{item.showname}}</td>
+                            <td></td>
+                            <td>
+                                <span v-if="!item.edit_switch">{{item.showname}}</span>
+                                <Icon type="edit" @click.native="edit_channel(index)" v-if="!item.edit_switch"></Icon>
+                                <div v-if="item.edit_switch" class="edit_div">
+                                    <Input :value="item.showname"></Input>
+                                    <Icon type="checkmark-round" @click.native="save_show_name(index)"></Icon>
+                                    <Icon type="close-round" @click.native="cannel_show_name(index)"></Icon>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td>
+                                <i-switch v-model="item.enabled_stats" @on-change="change"></i-switch>
+                            </td>
+                            <td>
+                                <Icon type="android-star" :class="{ recommend : item.recommend}" @click.native="change_recommend(index)"></Icon>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+               </draggable>
              </div>
              </div>
              <p>
-                 <Button type="info" v-if="!sort_gk">开关批处理</Button>
+                 <Button type="info" v-if="!sort_gk" @click="switch_batch = true">开关批处理</Button>
                  <Button type="warning" @click="sort_data" v-if="!sort_gk">排序</Button>
                  <Icon type="android-list" v-if="sort_gk" @click.native="sort_gk = !sort_gk"></Icon>
                  <Icon type="close-round" v-if="sort_gk" @click.native="cannle_sort"></Icon>
@@ -671,28 +718,41 @@
     <Modal title="提示" v-model="copy_pack1" class-name="vertical-center-modal" :loading="loading" @on-ok="copy_pack_ok" @on-cancel="cancel" ok-text="OK" cancel-text="Cancel">
        <p>确认复制当前支付类型的套餐吗?</p>
     </Modal>
+    <Modal title="提示" v-model="switch_batch" class-name="vertical-center-modal" :loading="loading" @on-ok="switch_batch_ok" @on-cancel="cancel" ok-text="OK" cancel-text="Cancel">
+       <p>确认开启全部渠道吗?</p>
+    </Modal>
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable';
+import VueForm from 'vue-form';
 export default {
   components:{
       draggable
   },
-  name: 'app',
+  name: 'basic-example',
   data(){
       return {
+          access_token: {
+              token:''
+          },
+          tab_data:{},
+          myform: {},
+          model: {},
           view_pay_web:true,
           pack_edit:{
               0:true,
               1:true
           },
+          temporary:[{}],//临时数组，存放新建表单
+          switch_batch:false,
           sort_gk:false,
           props_edit:false,
           copy_pack1:false,
           modal:false,
           loading:true,
+          pack_loading:false,
           kaiguan_kg:false,
           show:true,
           pay_switch:false,
@@ -704,7 +764,6 @@ export default {
           value: true,
           country_select:true,
           activeName2: 'first',
-          activeNames:['1'],
           switch1:true,
           get_country:false,
           get_channel:false,
@@ -728,19 +787,7 @@ export default {
               value: '选项5',
               label: '北京烤鸭'
           }],
-          pack_list:[{
-              name: '名字',
-              description:'描述',
-              gamecoin:'10',
-              priciCurrency:'USD',
-              pic:'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2812136344,465892702&fm=58'
-          },{
-              name: '名字1',
-              description:'描述1',
-              gamecoin:'11',
-              priciCurrency:'USD',
-              pic:'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2812136344,465892702&fm=58'
-          }],
+          pack_list:[],
           props_list:[{}],
           country_data_already:[],
           country_data:[{
@@ -750,25 +797,31 @@ export default {
                   payways:[{
                       name:'电子钱包',
                       channel_payways:[{
-                          name:'skrill'
+                          name:'skrill',
+                          chose:false
                       },
                       {
-                          name:'skrill1'
+                          name:'skrill1',
+                          chose:false
                       },
                       {
-                          name:'skrill2'
+                          name:'skrill2',
+                          chose:false
                       }]
                   },
                   {
                       name:'支付宝',
                       channel_payways:[{
-                          name:'skrill2'
+                          name:'skrill2',
+                          chose:false
                       },
                       {
-                          name:'skrill12'
+                          name:'skrill12',
+                          chose:false
                       },
                       {
-                          name:'skrill22'
+                          name:'skrill22',
+                          chose:false
                       }]
                   }]
               },
@@ -777,13 +830,16 @@ export default {
                   payways:[{
                       name:'电子钱包',
                       channel_payways:[{
-                          name:'skrill3'
+                          name:'skrill3',
+                          chose:false
                       },
                       {
-                          name:'skrill13'
+                          name:'skrill13',
+                          chose:false
                       },
                       {
-                          name:'skrill23'
+                          name:'skrill23',
+                          chose:false
                       }]
                   }]
               }]
@@ -795,13 +851,16 @@ export default {
                   payways:[{
                       name:'电子钱包',
                       channel_payways:[{
-                          name:'skrill4'
+                          name:'skrill4',
+                          chose:false
                       },
                       {
-                          name:'skrill14'
+                          name:'skrill14',
+                          chose:false
                       },
                       {
-                          name:'skrill24'
+                          name:'skrill24',
+                          chose:false
                       }]
                   }]
               },
@@ -810,13 +869,16 @@ export default {
                   payways:[{
                       name:'电子钱包',
                       channel_payways:[{
-                          name:'skrill5'
+                          name:'skrill5',
+                          chose:false
                       },
                       {
-                          name:'skrill15'
+                          name:'skrill15',
+                          chose:false
                       },
                       {
-                          name:'skrill25'
+                          name:'skrill25',
+                          chose:false
                       }]
                   }]
               }]
@@ -828,7 +890,51 @@ export default {
               edit_switch:false,
               enabled_stats:false,
               check:false,
-              recommend:true
+              recommend:true,
+              pack:[{
+                  name:'800',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              },{
+                  name:'801',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              }],
+              tool:[{
+                  name:'800',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              }]
           },
           {
               show_detail:false,
@@ -836,7 +942,79 @@ export default {
               edit_switch:false,
               enabled_stats:true,
               check:true,
-              recommend:false
+              recommend:false,
+              pack:[{
+                  name:'802',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              },{
+                  name:'803',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              },{
+                  name:'804',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              }],
+              tool:[{
+                  name:'800',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              },{
+                  name:'800',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              }]
           },
           {
               show_detail:false,
@@ -844,22 +1022,105 @@ export default {
               edit_switch:false,
               enabled_stats:false,
               check:false,
-              recommend:true
+              recommend:true,
+              pack:[{
+                  name:'805',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              }],
+              tool:[{
+                  name:'800',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              },{
+                  name:'800',
+                  miaoshu:'描述',
+                  gamecoin:'20',
+                  dingjia:'20',
+                  xianshi:'20',
+                  zhichi:'30',
+                  zhifu:'30',
+                  chuanti:'20',
+                  chuandi:'10',
+                  yunying:'usd',
+                  id:'123241',
+                  jiangli:'50',
+                  kg:false
+              }]
           }],
-          old_data:[]
+          old_data:[],
+          old_pack_data:[],
+          fullscreenLoading:false
       }
   },
   watch:{
       channel_set_data:{
-          handler:(val,oldVal)=>{
-              return oldVal
+          handler:function(val,oldVal){
+              console.log(oldVal)
           },
           deep:true
       }
   },
+  created:function(){
+       var self = this
+       this.access_token.token = sessionStorage.token
+       this.$nextTick(function (){
+           var data = {
+               merchant_shop_code : 'loes',
+               sign : 'e4505cd13fe2578dfaa9ade80f516261',
+               sign_type : 'shop',
+               time : '2222'
+           };
+           if(!sessionStorage.token){
+               this.$api.post('sign/verification', data, function(r) {
+                   self.access_token.token = r.result.access_token;
+                   sessionStorage.setItem('token',r.result.access_token)
+                   self.next_ajax(r.result.access_token)
+               })
+           }else{
+               self.next_ajax(sessionStorage.token)
+           }
+	   })
+  },
   methods: {
+    next_ajax(token){
+        var self = this
+        //获取平台列表
+        this.$api.get('verification/package/get_platform', {token:token} , function(r) {
+            for(var i=0;i<r.result.length;i++){
+                self.$set(self.tab_data,i,r.result[i])
+            }
+            self.activeName2 = r.result[0]
+        })
+        //查询基础套餐
+        this.$api.get('verification/package/list_package_base', {token:token,platform:'google',type:'package'} , function(r) {
+            for(var i=0;i<r.result.lists.length;i++){
+                self.$set(self.pack_list,i,r.result.lists[i])
+            }
+        })
+    },
     handleClick(tab, event) {
-        console.log(tab.name);
+        console.log('1');
     },
     handleClose (item,index) {
         var _this = this
@@ -870,7 +1131,6 @@ export default {
             }
         }
         item.chose = false
-
         if(this.chose_country_data.length == 0){
             this.get_country_tabs = ''
         }else{
@@ -895,9 +1155,7 @@ export default {
         }
     },
     asyncOK(params){
-        this.$api.get('topics', params, function(r) {
-            this.modal = false;
-        })
+        //console.log("%c%s","color: red; background: yellow; font-size: 24px;","系统语言为：" + navigator.language)
     },
     copy_pack_ok(){
 
@@ -908,14 +1166,20 @@ export default {
     copy_pack(e){
         this.copy_pack1 = true;
     },
-    del_list(index,item){
-        console.log(item)
-        item.splice(index,1)
+    del_list(index,item,id){
+        this.$api.get('verification/package/remove_package_base', {token:this.access_token.token,amount_id:id} , function(r) {
+            item.splice(index,1)
+        })
     },
-    copy_tr(index,data){
-        console.log(data)
-        var copy = this.pack_list.slice(index,index+1)
-        this.pack_list.splice(index+1,0,copy[0])
+    copy_tr(index,data,model){
+        // var copy = this.pack_list.slice(index,index+1)
+        // this.pack_list.splice(index+1,0,copy[0])
+        var new_list = {}
+        for(var key in model[index]){
+            new_list[key] = model[index][key]
+        }
+        model.splice(index+1,0,new_list)
+        // model.push(data)
     },
     add_tr(index,model,status){
         var new_list = {}
@@ -923,27 +1187,86 @@ export default {
             new_list[key] = ''
         }
         model.splice(index+1,0,new_list)
+        if(status){
+            for(var key in model){
+                if(model[key]){
+                    status[key] = true
+                }else{
+                    status[key] = false
+                }
+            }
+            status[index + 1] = false;
+        }
+    },
+    save_pack(index,model,id){
+        var self = this
+        model.token = this.access_token.token
+        model.type = 'package'
+        var new_data = {}
         for(var key in model){
-            if(model[key]){
-                status[key] = true
-            }else{
-                status[key] = false
+            new_data[key] = model[key]
+        }
+        console.log(model)
+        this.pack_loading = !this.pack_loading
+        if(id){
+            this.$api.get('verification/package/edit_package_base', new_data , function(r) {
+                self.pack_loading = !self.pack_loading
+                model.extra_tag = !model.extra_tag
+            })
+        }else{
+            this.$api.get('verification/package/create_package_base', new_data , function(r) {
+                self.pack_loading = !self.pack_loading
+                model.extra_tag = !model.extra_tag
+            })
+        }
+        // this.$Message.success('保存成功！');
+    },
+    created_base(type){
+        var self = this
+        var new_list = {}
+
+        for(var i=0;i<this.temporary.length;i++){
+
+            new_list.token = this.access_token.token
+            new_list.type = type
+            new_list.platform = 'google'
+            new_list.operator = 'renzengpeng@oasgames.com'
+
+            for(var key in this.temporary[i]){
+                new_list[key] = []
+                new_list[key][i] = this.temporary[i][key]
             }
         }
-        status[index + 1] = false;
-
-    },
-    save_pack(index,model){
-        this.$Message.success('保存成功！');
-        model[index] = true
+        console.log(new_list)
+        //console.log(this.temporary,this.temporary.length)
+        this.$api.get('verification/package/create_package_base', new_list , function(r) {
+            console.log(r)
+        })
     },
     edit_pack(index,model){
-        model[index] = false
+        // for(var i=0;i<this.channel_set_data.length;i++){
+        //     this.old_pack_data[i] = [{}]
+        //     for(var s=0;s<this.channel_set_data.length;s++){
+        //         this.old_pack_data[i][s] = ''
+        //     }
+        // }
+        // this.old_pack_data[indexs][index] = data
+        model[index].extra_tag = !model[index].extra_tag
+    },
+    add(index,model){
+        var new_list = {}
+        for(var key in model[index]){
+            new_list[key] = ''
+        }
+        model.splice(index+1,0,new_list)
+        model[index + 1].kg = true;
+        console.log(model)
     },
     emp_pcak(index,model){
-        console.log(model[index])
-        for(var key in model[index]){
-            model[index][key] = ''
+        for(var key in model){
+            if(key != 'amount_id'){
+                model[key] = ''
+            }
         }
     },
     sort_list(model,status){
@@ -989,7 +1312,14 @@ export default {
         this.country_data[index].country[index_].chose = true
     },
     toggle_detail(index){
-        this.channel_set_data[index].show_detail = !this.channel_set_data[index].show_detail
+        if(this.channel_set_data[index].show_detail){
+            this.channel_set_data[index].show_detail = false
+        }else{
+            for(var i=0;i<this.channel_set_data.length;i++){
+                this.channel_set_data[i].show_detail = false
+            }
+            this.channel_set_data[index].show_detail = !this.channel_set_data[index].show_detail
+        }
     },
     edit_channel(index){
         this.channel_set_data[index].edit_switch = !this.channel_set_data[index].edit_switch
@@ -1048,6 +1378,34 @@ export default {
     cannle_sort(){
         this.sort_gk = !this.sort_gk
         this.channel_set_data = this.old_data
+    },
+    comeback(index,model){
+        model.kg = !model.kg
+    },
+    show_load(){
+        this.fullscreenLoading = true;
+        setTimeout(() => {
+          this.fullscreenLoading = false;
+        }, 3000);
+    },
+    switch_batch_ok(){
+        this.switch_batch = false
+        for(var i=0;i<this.channel_set_data.length;i++){
+            if(this.channel_set_data[i].check){
+                this.channel_set_data[i].enabled_stats = true
+            }else{
+                this.channel_set_data[i].enabled_stats = false
+            }
+        }
+    },
+    onSubmit(model){
+        console.log("%c%s","color: red; background: yellow; font-size: 24px;","Ajax提交中....");
+    },
+    chose_way(btn,nums){
+        for(var key in btn){
+            btn[key].chose = false
+        }
+        nums.chose = true
     }
   }
 }
