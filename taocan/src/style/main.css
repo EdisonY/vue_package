@@ -39,11 +39,14 @@
 .already_chose,.search_country,.channel_chose,.stencil_chose,.country_setting p,.channel_main{margin: 0 21px;padding: 10px 0;}
 .already_chose a{display: block;float: right;}
 .search_country .el-input{display: inline-block;width: auto;}
-.search_country .country_list,.channel_list_main{margin:10px 0;overflow-y: auto;max-height: 150px;}
+.search_country .country_list,.channel_list_main{margin:10px 0;overflow-y: auto;max-height: 300px;}
 .search_country .country_list ul li,.channel_chose ul li{padding: 10px 0;border-bottom: 1px dashed #ccc;vertical-align: middle;}
-.search_country .country_list ul li span,.channel_chose ul li span{float: left;height: 32px;line-height: 32px;min-width: 80px;}
+.channel_chose ul li span{float: left;height: 32px;line-height: 32px;min-width: 80px;}
+.search_country .country_list ul li{position: relative;}
+.search_country .country_list ul li strong{height: 32px;line-height: 32px;min-width: 80px;position: absolute;left:0;top:10px;}
 .search_country .country_list ul li .country_list_main,.channel_chose ul li .channel_list{float: left;}
 .search_country .country_list ul li .country_list_main span,.channel_chose ul li .channel_list span{float: none;height: auto;line-height: normal;}
+.search_country .country_list ul li .country_list_main{margin-left: 80px;}
 .channel_chose ul li{border: none;}
 .stencil_chose ul{padding: 15px 0;}
 .stencil_chose ul li{float: left;text-align: center;cursor: pointer;margin: 0 10px;}
@@ -63,8 +66,8 @@
 
 .no_view{cursor: no-drop;color: #ccc;}
 
-.search_country .ivu-btn,.channel_chose .ivu-btn{margin-right: 6px;}
-.ivu-btn.get{background: #fff;}
+.search_country .ivu-btn,.channel_chose .ivu-btn{margin-right: 6px;margin-bottom: 5px;}
+.ivu-btn.get{background: #ccc;}
 .ivu-btn.chose{color: #57a3f3;background-color: #fff;border-color: #57a3f3;}
 
 .ivu-input{width: auto;}
@@ -89,11 +92,11 @@
 .more_info .my_input{width: 100%;}
 .ivu-table table tr td .my_input{width: 100%;}
 
-.tijiao_btn{    position: absolute;    right: 0;    bottom: -46px;}
+.tijiao_btn{position: absolute;right: 0;bottom: -46px;}
+.el-tabs__content{overflow: inherit;}
+.ivu-select-selection .ivu-select-arrow{font-size: 14px;}
 
-
-
-
+.el-input__inner{height: 32px;}
 
 
 
